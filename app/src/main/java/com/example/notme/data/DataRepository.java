@@ -239,8 +239,14 @@ public class DataRepository {
         if (packageName == null || packageName.isEmpty()) {
             return "unknown";
         }
-        String[] parts = packageName.split("\\.");
-        return parts.length > 0 ? parts[parts.length - 1] : packageName;
+
+        int firstDotIndex = packageName.indexOf('.');
+
+        if (firstDotIndex != -1 && firstDotIndex < packageName.length() - 1) {
+            return packageName.substring(firstDotIndex + 1);
+        }
+
+        return packageName;
     }
 
     // Export to CSV file with user-chosen location
