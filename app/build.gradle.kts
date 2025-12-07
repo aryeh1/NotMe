@@ -26,6 +26,10 @@ android {
                 "proguard-rules.pro"
             )
         }
+        getByName("debug") {
+            applicationIdSuffix = ".dev"
+            resValue("string", "app_name", "NotMe (Dev)")
+        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
