@@ -4,9 +4,8 @@ import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import android.util.Log;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import com.example.notme.data.DataRepository;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -14,7 +13,6 @@ import java.util.Locale;
 public class NotificationService extends NotificationListenerService {
 
     private static final String TAG = "NotMe_NotifService";
-    private static final String LOG_FILE = "notifications.txt";
 
     @Override
     public void onCreate() {
@@ -41,26 +39,8 @@ public class NotificationService extends NotificationListenerService {
         Log.d(TAG, "Title: " + titleStr);
         Log.d(TAG, "Text: " + textStr);
 
-        // Write to file
-        String logEntry = timestamp + "\n" +
-                         "App: " + packageName + "\n" +
-                         "Title: " + titleStr + "\n" +
-                         "Text: " + textStr + "\n" +
-                         "------\n";
-
-        writeToFile(logEntry);
-    }
-
-    private void writeToFile(String data) {
-        try {
-            File file = new File(getFilesDir(), LOG_FILE);
-            FileWriter writer = new FileWriter(file, true); // append mode
-            writer.write(data);
-            writer.close();
-            Log.d(TAG, "writeToFile: SUCCESS - wrote to " + file.getAbsolutePath());
-        } catch (IOException e) {
-            Log.e(TAG, "writeToFile: FAILED", e);
-        }
+        // Save using DataRepository
+        DataRepository.save(this, packageName, titleStr, textStr, timestamp);
     }
 
     @Override
