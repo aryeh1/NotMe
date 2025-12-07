@@ -33,7 +33,6 @@ public class MainActivity extends AppCompatActivity {
     private Button checkPermissionBtn;
     private Button openSettingsBtn;
     private Button testBtn;
-    private Button clearBtn;
     private Button moreBtn;
 
     private Handler dataReadHandler;
@@ -52,14 +51,12 @@ public class MainActivity extends AppCompatActivity {
         checkPermissionBtn = findViewById(R.id.checkPermissionBtn);
         openSettingsBtn = findViewById(R.id.openSettingsBtn);
         testBtn = findViewById(R.id.testBtn);
-        clearBtn = findViewById(R.id.clearBtn);
         moreBtn = findViewById(R.id.moreBtn);
 
         // Set up button click listeners
         checkPermissionBtn.setOnClickListener(v -> checkPermissionStatus());
         openSettingsBtn.setOnClickListener(v -> openNotificationSettings());
         testBtn.setOnClickListener(v -> testBroadcast());
-        clearBtn.setOnClickListener(v -> clearLog());
         moreBtn.setOnClickListener(v -> showMoreMenu());
 
         // Set up data reading handler - reads from repository every 2 seconds
@@ -132,18 +129,25 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(this, "Test notification saved (" + DataRepository.getStorageMode() + ")", Toast.LENGTH_SHORT).show();
     }
 
-    // Button handler: Clear the notification log
+    // Menu: Clear All
     private void clearLog() {
-        Log.d(TAG, "clearLog: Clearing notification log");
-        txtView.setText("Waiting for notifications...");
+        new AlertDialog.Builder(this, R.style.DialogTheme)
+            .setTitle("Clear All")
+            .setMessage("Delete all notifications from database?")
+            .setPositiveButton("Clear", (dialog, which) -> {
+                Log.d(TAG, "clearLog: Clearing notification log");
+                txtView.setText("Waiting for notifications...");
 
-        // Clear using DataRepository
-        DataRepository.clear(this);
+                // Clear using DataRepository
+                DataRepository.clear(this);
 
-        // Refresh UI after short delay
-        new Handler().postDelayed(this::readNotificationData, 300);
+                // Refresh UI after short delay
+                new Handler().postDelayed(this::readNotificationData, 300);
 
-        Toast.makeText(this, "Log cleared (" + DataRepository.getStorageMode() + ")", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Log cleared (" + DataRepository.getStorageMode() + ")", Toast.LENGTH_SHORT).show();
+            })
+            .setNegativeButton("Cancel", null)
+            .show();
     }
 
     // Read notifications from repository and display in TextView
@@ -182,6 +186,9 @@ public class MainActivity extends AppCompatActivity {
             } else if (id == R.id.menu_compact) {
                 compactDB();
                 return true;
+            } else if (id == R.id.menu_clear) {
+                clearLog();
+                return true;
             }
 
             return false;
@@ -195,7 +202,7 @@ public class MainActivity extends AppCompatActivity {
         new Thread(() -> {
             String stats = DataRepository.getStats(this);
             runOnUiThread(() -> {
-                new AlertDialog.Builder(this)
+                new AlertDialog.Builder(this, R.style.DialogTheme)
                     .setTitle("Statistics")
                     .setMessage(stats)
                     .setPositiveButton("OK", null)
@@ -206,16 +213,12 @@ public class MainActivity extends AppCompatActivity {
 
     // Menu: Export CSV
     private void exportCSV() {
-        new Thread(() -> {
-            String result = DataRepository.exportToCSV(this);
-            runOnUiThread(() -> {
-                new AlertDialog.Builder(this)
-                    .setTitle("Export Complete")
-                    .setMessage(result)
-                    .setPositiveButton("OK", null)
-                    .show();
-            });
-        }).start();
+        Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("text/csv");
+        String timestamp = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss", Locale.getDefault()).format(new Date());
+        intent.putExtra(Intent.EXTRA_TITLE, "notme_export_" + timestamp + ".csv");
+        startActivityForResult(intent, 100);
     }
 
     // Menu: Senders
@@ -223,7 +226,7 @@ public class MainActivity extends AppCompatActivity {
         new Thread(() -> {
             String senders = DataRepository.getSenders(this);
             runOnUiThread(() -> {
-                new AlertDialog.Builder(this)
+                new AlertDialog.Builder(this, R.style.DialogTheme)
                     .setTitle("Senders")
                     .setMessage(senders)
                     .setPositiveButton("Close", null)
@@ -237,8 +240,9 @@ public class MainActivity extends AppCompatActivity {
         EditText input = new EditText(this);
         input.setInputType(InputType.TYPE_CLASS_TEXT);
         input.setHint("Enter search term...");
+        input.setTextColor(0xFF000000);
 
-        new AlertDialog.Builder(this)
+        new AlertDialog.Builder(this, R.style.DialogTheme)
             .setTitle("🔍 Search Notifications")
             .setView(input)
             .setPositiveButton("Search", (dialog, which) -> {
@@ -246,7 +250,7 @@ public class MainActivity extends AppCompatActivity {
                 new Thread(() -> {
                     String results = DataRepository.search(this, query);
                     runOnUiThread(() -> {
-                        new AlertDialog.Builder(this)
+                        new AlertDialog.Builder(this, R.style.DialogTheme)
                             .setTitle("Search Results")
                             .setMessage(results)
                             .setPositiveButton("OK", null)
@@ -260,14 +264,14 @@ public class MainActivity extends AppCompatActivity {
 
     // Menu: Compact DB
     private void compactDB() {
-        new AlertDialog.Builder(this)
+        new AlertDialog.Builder(this, R.style.DialogTheme)
             .setTitle("Compact Database")
             .setMessage("This will reclaim unused space and optimize the database. Continue?")
             .setPositiveButton("Compact", (dialog, which) -> {
                 new Thread(() -> {
                     String result = DataRepository.compactDB(this);
                     runOnUiThread(() -> {
-                        new AlertDialog.Builder(this)
+                        new AlertDialog.Builder(this, R.style.DialogTheme)
                             .setTitle("Compact Complete")
                             .setMessage(result)
                             .setPositiveButton("OK", null)
@@ -308,5 +312,27 @@ public class MainActivity extends AppCompatActivity {
 
         // Stop the handler to prevent memory leaks
         dataReadHandler.removeCallbacks(dataReadRunnable);
+    }
+
+    // Handle file picker result for CSV export
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 100 && resultCode == RESULT_OK && data != null) {
+            android.net.Uri uri = data.getData();
+            if (uri != null) {
+                new Thread(() -> {
+                    String result = DataRepository.exportToCSV(this, uri);
+                    runOnUiThread(() -> {
+                        new AlertDialog.Builder(this, R.style.DialogTheme)
+                            .setTitle("Export Complete")
+                            .setMessage(result)
+                            .setPositiveButton("OK", null)
+                            .show();
+                    });
+                }).start();
+            }
+        }
     }
 }
