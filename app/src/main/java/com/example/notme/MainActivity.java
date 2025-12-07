@@ -1,12 +1,13 @@
 package com.example.notme;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 
 import android.content.ComponentName;
 import android.content.Intent;
@@ -18,15 +19,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.notme.data.DataRepository;
+import com.example.notme.data.NotificationEntity;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "NotMe_MainActivity";
-    private static final int READ_INTERVAL = 2000; // Read data every 2 seconds
 
     private TextView txtView;
     private TextView statusText;
@@ -34,9 +36,6 @@ public class MainActivity extends AppCompatActivity {
     private Button openSettingsBtn;
     private Button testBtn;
     private Button moreBtn;
-
-    private Handler dataReadHandler;
-    private Runnable dataReadRunnable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,19 +58,37 @@ public class MainActivity extends AppCompatActivity {
         testBtn.setOnClickListener(v -> testBroadcast());
         moreBtn.setOnClickListener(v -> showMoreMenu());
 
-        // Set up data reading handler - reads from repository every 2 seconds
-        dataReadHandler = new Handler();
-        dataReadRunnable = new Runnable() {
+        // Set up reactive UI using LiveData observer
+        LiveData<List<NotificationEntity>> notificationsLiveData = DataRepository.getAllNotificationsLive(this);
+        notificationsLiveData.observe(this, new Observer<List<NotificationEntity>>() {
             @Override
-            public void run() {
-                readNotificationData();
-                dataReadHandler.postDelayed(this, READ_INTERVAL);
+            public void onChanged(List<NotificationEntity> entities) {
+                Log.d(TAG, "LiveData observer triggered: " + (entities != null ? entities.size() : 0) + " notifications");
+                updateUI(entities);
             }
-        };
-        Log.d(TAG, "onCreate: Data reading handler initialized (Mode: " + DataRepository.getStorageMode() + ")");
+        });
+        Log.d(TAG, "onCreate: LiveData observer initialized (Mode: " + DataRepository.getStorageMode() + ")");
 
         // Check permission on startup
         checkPermissionStatus(false);
+    }
+
+    // Update UI with notification data
+    private void updateUI(List<NotificationEntity> entities) {
+        if (entities == null || entities.isEmpty()) {
+            txtView.setText("Waiting for notifications...");
+            return;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for (NotificationEntity entity : entities) {
+            sb.append(entity.getTimestamp()).append("\n")
+              .append("App: ").append(entity.getPackageName()).append("\n")
+              .append("Title: ").append(entity.getTitle()).append("\n")
+              .append("Text: ").append(entity.getText()).append("\n")
+              .append("------\n");
+        }
+        txtView.setText(sb.toString());
     }
 
     // Helper method to check if notification access is granted
@@ -122,11 +139,9 @@ public class MainActivity extends AppCompatActivity {
 
         String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
 
-        // Save test notification using DataRepository
-        DataRepository.save(this, "com.example.test", "Test", "This is a test notification!", timestamp);
-
-        // Refresh UI after short delay
-        new Handler().postDelayed(this::readNotificationData, 300);
+        // Save test notification using DataRepository with new metadata fields
+        DataRepository.save(this, "com.example.test", "Test", "This is a test notification!",
+                timestamp, false, "Test", 2);
 
         Toast.makeText(this, "Test notification saved (" + DataRepository.getStorageMode() + ")", Toast.LENGTH_SHORT).show();
     }
@@ -138,31 +153,15 @@ public class MainActivity extends AppCompatActivity {
             .setMessage("Delete all notifications from database?")
             .setPositiveButton("Clear", (dialog, which) -> {
                 Log.d(TAG, "clearLog: Clearing notification log");
-                txtView.setText("Waiting for notifications...");
 
                 // Clear using DataRepository
+                // LiveData will automatically update the UI when data changes
                 DataRepository.clear(this);
-
-                // Refresh UI after short delay
-                new Handler().postDelayed(this::readNotificationData, 300);
 
                 Toast.makeText(this, "Log cleared (" + DataRepository.getStorageMode() + ")", Toast.LENGTH_SHORT).show();
             })
             .setNegativeButton("Cancel", null)
             .show();
-    }
-
-    // Read notifications from repository and display in TextView
-    private void readNotificationData() {
-        // Run on background thread (database operations must be off main thread)
-        new Thread(() -> {
-            String data = DataRepository.getAllLogs(this);
-
-            // Update UI on main thread
-            runOnUiThread(() -> {
-                txtView.setText(data);
-            });
-        }).start();
     }
 
     // Show More menu (⋮ button)
@@ -289,31 +288,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d(TAG, "onResume: App visible, re-checking permission and starting data reader");
+        Log.d(TAG, "onResume: App visible, re-checking permission");
         checkPermissionStatus(false);
-
-        // Start data reading when app becomes visible
-        dataReadHandler.post(dataReadRunnable);
-    }
-
-    // App going to background - stop data reading to save battery
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Log.d(TAG, "onPause: App going to background, stopping data reader");
-
-        // Stop data reading when app goes to background
-        dataReadHandler.removeCallbacks(dataReadRunnable);
-    }
-
-    // Stop data reading when activity is destroyed
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Log.d(TAG, "onDestroy: Stopping data reader");
-
-        // Stop the handler to prevent memory leaks
-        dataReadHandler.removeCallbacks(dataReadRunnable);
     }
 
     // Handle file picker result for CSV export

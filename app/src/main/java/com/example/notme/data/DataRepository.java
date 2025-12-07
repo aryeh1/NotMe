@@ -3,6 +3,8 @@ package com.example.notme.data;
 import android.content.Context;
 import android.util.Log;
 
+import androidx.lifecycle.LiveData;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -22,15 +24,18 @@ public class DataRepository {
     private static final String LOG_FILE = "notifications.txt";
     private static final ExecutorService executor = Executors.newSingleThreadExecutor();
 
-    // Save a notification
-    public static void save(Context context, String packageName, String title, String text, String timestamp) {
+    // Save a notification with new metadata fields
+    public static void save(Context context, String packageName, String title, String text, String timestamp,
+                           boolean isOngoing, String category, int actionCount) {
         if (USE_DB) {
             // Save to Database
             executor.execute(() -> {
                 try {
-                    NotificationEntity entity = new NotificationEntity(packageName, title, text, timestamp);
+                    NotificationEntity entity = new NotificationEntity(packageName, title, text, timestamp,
+                            isOngoing, category, actionCount);
                     AppDatabase.getInstance(context).dao().insert(entity);
-                    Log.d(TAG, "save: Saved to DATABASE");
+                    Log.d(TAG, "save: Saved to DATABASE with metadata (ongoing=" + isOngoing +
+                            ", category=" + category + ", actions=" + actionCount + ")");
                 } catch (Exception e) {
                     Log.e(TAG, "save: Database error", e);
                 }
@@ -58,12 +63,17 @@ public class DataRepository {
         }
     }
 
+    // Get LiveData for reactive UI updates
+    public static LiveData<List<NotificationEntity>> getAllNotificationsLive(Context context) {
+        return AppDatabase.getInstance(context).dao().getAll();
+    }
+
     // Get all logs as formatted string
     public static String getAllLogs(Context context) {
         if (USE_DB) {
             // Get from Database
             try {
-                List<NotificationEntity> entities = AppDatabase.getInstance(context).dao().getAll();
+                List<NotificationEntity> entities = AppDatabase.getInstance(context).dao().getAllSync();
 
                 if (entities.isEmpty()) {
                     return "Waiting for notifications...";
@@ -154,7 +164,7 @@ public class DataRepository {
         }
 
         try {
-            List<NotificationEntity> all = AppDatabase.getInstance(context).dao().getAll();
+            List<NotificationEntity> all = AppDatabase.getInstance(context).dao().getAllSync();
             int count = all.size();
 
             if (count == 0) {
@@ -195,7 +205,7 @@ public class DataRepository {
         }
 
         try {
-            List<NotificationEntity> all = AppDatabase.getInstance(context).dao().getAll();
+            List<NotificationEntity> all = AppDatabase.getInstance(context).dao().getAllSync();
 
             if (all.isEmpty()) {
                 return "No notifications to analyze";
@@ -256,7 +266,7 @@ public class DataRepository {
         }
 
         try {
-            List<NotificationEntity> all = AppDatabase.getInstance(context).dao().getAll();
+            List<NotificationEntity> all = AppDatabase.getInstance(context).dao().getAllSync();
 
             if (all.isEmpty()) {
                 return "No notifications to export";
@@ -270,18 +280,21 @@ public class DataRepository {
 
             java.io.OutputStreamWriter writer = new java.io.OutputStreamWriter(outputStream);
 
-            // Write header
-            writer.write("Timestamp,Package,App,Title,Text\n");
+            // Write header with new columns
+            writer.write("Timestamp,Package,App,Title,Text,IsOngoing,Category,ActionCount\n");
 
-            // Write data
+            // Write data with new columns
             for (NotificationEntity entity : all) {
                 String appName = extractAppName(entity.getPackageName());
-                writer.write(String.format("\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"\n",
+                writer.write(String.format("\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%d\"\n",
                     escapeCsv(entity.getTimestamp()),
                     escapeCsv(entity.getPackageName()),
                     escapeCsv(appName),
                     escapeCsv(entity.getTitle()),
-                    escapeCsv(entity.getText())
+                    escapeCsv(entity.getText()),
+                    entity.isOngoing() ? "TRUE" : "FALSE",
+                    escapeCsv(entity.getCategory()),
+                    entity.getActionCount()
                 ));
             }
 
@@ -314,7 +327,7 @@ public class DataRepository {
         }
 
         try {
-            List<NotificationEntity> all = AppDatabase.getInstance(context).dao().getAll();
+            List<NotificationEntity> all = AppDatabase.getInstance(context).dao().getAllSync();
             String lowerQuery = query.toLowerCase();
 
             StringBuilder sb = new StringBuilder();
