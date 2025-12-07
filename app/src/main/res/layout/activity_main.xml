@@ -33,6 +33,7 @@
 
         <Button
             android:id="@+id/checkPermissionBtn"
+            style="@style/SimpleButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -42,6 +43,7 @@
 
         <Button
             android:id="@+id/openSettingsBtn"
+            style="@style/SimpleButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -51,6 +53,7 @@
 
         <Button
             android:id="@+id/testBtn"
+            style="@style/SimpleButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -60,11 +63,22 @@
 
         <Button
             android:id="@+id/clearBtn"
+            style="@style/SimpleButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Clear"
-            android:textSize="12sp" />
+            android:textSize="12sp"
+            android:layout_marginEnd="4dp" />
+
+        <Button
+            android:id="@+id/moreBtn"
+            style="@style/SimpleButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.4"
+            android:text="⋮"
+            android:textSize="18sp" />
     </LinearLayout>
 
     <TextView
@@ -80,7 +94,7 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:background="#EEEEEE"
-        android:padding="2dp">
+        android:padding="10dp">
 
         <TextView
             android:id="@+id/notificationLog"
