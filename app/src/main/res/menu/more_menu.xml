@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_stats"
+        android:title="📊 Stats" />
+    <item
+        android:id="@+id/menu_export"
+        android:title="📤 Export CSV" />
+    <item
+        android:id="@+id/menu_senders"
+        android:title="📱 Senders" />
+    <item
+        android:id="@+id/menu_search"
+        android:title="🔍 Search" />
+    <item
+        android:id="@+id/menu_compact"
+        android:title="🗜️ Compact DB" />
+</menu>

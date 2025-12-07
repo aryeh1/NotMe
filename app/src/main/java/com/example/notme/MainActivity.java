@@ -4,12 +4,16 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.PopupMenu;
 
 import android.content.ComponentName;
 import android.content.Intent;
 import android.provider.Settings;
+import android.text.InputType;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private Button openSettingsBtn;
     private Button testBtn;
     private Button clearBtn;
+    private Button moreBtn;
 
     private Handler dataReadHandler;
     private Runnable dataReadRunnable;
@@ -48,12 +53,14 @@ public class MainActivity extends AppCompatActivity {
         openSettingsBtn = findViewById(R.id.openSettingsBtn);
         testBtn = findViewById(R.id.testBtn);
         clearBtn = findViewById(R.id.clearBtn);
+        moreBtn = findViewById(R.id.moreBtn);
 
         // Set up button click listeners
         checkPermissionBtn.setOnClickListener(v -> checkPermissionStatus());
         openSettingsBtn.setOnClickListener(v -> openNotificationSettings());
         testBtn.setOnClickListener(v -> testBroadcast());
         clearBtn.setOnClickListener(v -> clearLog());
+        moreBtn.setOnClickListener(v -> showMoreMenu());
 
         // Set up data reading handler - reads from repository every 2 seconds
         dataReadHandler = new Handler();
@@ -150,6 +157,126 @@ public class MainActivity extends AppCompatActivity {
                 txtView.setText(data);
             });
         }).start();
+    }
+
+    // Show More menu (⋮ button)
+    private void showMoreMenu() {
+        PopupMenu popup = new PopupMenu(this, moreBtn);
+        popup.getMenuInflater().inflate(R.menu.more_menu, popup.getMenu());
+
+        popup.setOnMenuItemClickListener(item -> {
+            int id = item.getItemId();
+
+            if (id == R.id.menu_stats) {
+                showStats();
+                return true;
+            } else if (id == R.id.menu_export) {
+                exportCSV();
+                return true;
+            } else if (id == R.id.menu_senders) {
+                showSenders();
+                return true;
+            } else if (id == R.id.menu_search) {
+                showSearch();
+                return true;
+            } else if (id == R.id.menu_compact) {
+                compactDB();
+                return true;
+            }
+
+            return false;
+        });
+
+        popup.show();
+    }
+
+    // Menu: Stats
+    private void showStats() {
+        new Thread(() -> {
+            String stats = DataRepository.getStats(this);
+            runOnUiThread(() -> {
+                new AlertDialog.Builder(this)
+                    .setTitle("Statistics")
+                    .setMessage(stats)
+                    .setPositiveButton("OK", null)
+                    .show();
+            });
+        }).start();
+    }
+
+    // Menu: Export CSV
+    private void exportCSV() {
+        new Thread(() -> {
+            String result = DataRepository.exportToCSV(this);
+            runOnUiThread(() -> {
+                new AlertDialog.Builder(this)
+                    .setTitle("Export Complete")
+                    .setMessage(result)
+                    .setPositiveButton("OK", null)
+                    .show();
+            });
+        }).start();
+    }
+
+    // Menu: Senders
+    private void showSenders() {
+        new Thread(() -> {
+            String senders = DataRepository.getSenders(this);
+            runOnUiThread(() -> {
+                new AlertDialog.Builder(this)
+                    .setTitle("Senders")
+                    .setMessage(senders)
+                    .setPositiveButton("Close", null)
+                    .show();
+            });
+        }).start();
+    }
+
+    // Menu: Search
+    private void showSearch() {
+        EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        input.setHint("Enter search term...");
+
+        new AlertDialog.Builder(this)
+            .setTitle("🔍 Search Notifications")
+            .setView(input)
+            .setPositiveButton("Search", (dialog, which) -> {
+                String query = input.getText().toString();
+                new Thread(() -> {
+                    String results = DataRepository.search(this, query);
+                    runOnUiThread(() -> {
+                        new AlertDialog.Builder(this)
+                            .setTitle("Search Results")
+                            .setMessage(results)
+                            .setPositiveButton("OK", null)
+                            .show();
+                    });
+                }).start();
+            })
+            .setNegativeButton("Cancel", null)
+            .show();
+    }
+
+    // Menu: Compact DB
+    private void compactDB() {
+        new AlertDialog.Builder(this)
+            .setTitle("Compact Database")
+            .setMessage("This will reclaim unused space and optimize the database. Continue?")
+            .setPositiveButton("Compact", (dialog, which) -> {
+                new Thread(() -> {
+                    String result = DataRepository.compactDB(this);
+                    runOnUiThread(() -> {
+                        new AlertDialog.Builder(this)
+                            .setTitle("Compact Complete")
+                            .setMessage(result)
+                            .setPositiveButton("OK", null)
+                            .show();
+                    });
+                }).start();
+            })
+            .setNegativeButton("Cancel", null)
+            .show();
     }
 
     // Re-check permission when app becomes visible (e.g., returning from Settings)

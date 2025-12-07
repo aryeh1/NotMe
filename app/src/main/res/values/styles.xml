@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Simple gray button style - no purple/accent colors -->
+    <style name="SimpleButton" parent="Widget.AppCompat.Button">
+        <item name="android:backgroundTint">@android:color/darker_gray</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+</resources>
