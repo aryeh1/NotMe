@@ -13,12 +13,19 @@ public class NotificationEntity {
     private String title;
     private String text;
     private String timestamp;
+    private boolean isOngoing;
+    private String category;
+    private int actionCount;
 
-    public NotificationEntity(String packageName, String title, String text, String timestamp) {
+    public NotificationEntity(String packageName, String title, String text, String timestamp,
+                             boolean isOngoing, String category, int actionCount) {
         this.packageName = packageName;
         this.title = title;
         this.text = text;
         this.timestamp = timestamp;
+        this.isOngoing = isOngoing;
+        this.category = category;
+        this.actionCount = actionCount;
     }
 
     // Getters and Setters (Required by Room)
@@ -60,5 +67,29 @@ public class NotificationEntity {
 
     public void setTimestamp(String timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public boolean isOngoing() {
+        return isOngoing;
+    }
+
+    public void setOngoing(boolean ongoing) {
+        isOngoing = ongoing;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public int getActionCount() {
+        return actionCount;
+    }
+
+    public void setActionCount(int actionCount) {
+        this.actionCount = actionCount;
     }
 }

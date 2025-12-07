@@ -6,7 +6,7 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
-@Database(entities = {NotificationEntity.class}, version = 1, exportSchema = false)
+@Database(entities = {NotificationEntity.class}, version = 2, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 
     private static volatile AppDatabase INSTANCE;
@@ -21,7 +21,9 @@ public abstract class AppDatabase extends RoomDatabase {
                             context.getApplicationContext(),
                             AppDatabase.class,
                             "notifications.db"
-                    ).build();
+                    )
+                    .fallbackToDestructiveMigration()
+                    .build();
                 }
             }
         }

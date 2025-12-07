@@ -24,7 +24,7 @@ public class NotificationService extends NotificationListenerService {
     public void onNotificationPosted(StatusBarNotification sbn) {
         Log.d(TAG, "onNotificationPosted: Notification received!");
 
-        // Extract information from the notification
+        // Extract basic information from the notification
         String packageName = sbn.getPackageName();
         CharSequence title = sbn.getNotification().extras.getCharSequence("android.title");
         CharSequence text = sbn.getNotification().extras.getCharSequence("android.text");
@@ -35,12 +35,30 @@ public class NotificationService extends NotificationListenerService {
 
         String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
 
+        // Extract new metadata fields
+        boolean isOngoing = (sbn.getNotification().flags & android.app.Notification.FLAG_ONGOING_EVENT) != 0;
+
+        // Get category (Social, Email, Service, etc.)
+        String category = sbn.getNotification().category;
+        if (category == null) {
+            category = "Uncategorized";
+        }
+
+        // Get action count
+        int actionCount = 0;
+        if (sbn.getNotification().actions != null) {
+            actionCount = sbn.getNotification().actions.length;
+        }
+
         Log.d(TAG, "Package: " + packageName);
         Log.d(TAG, "Title: " + titleStr);
         Log.d(TAG, "Text: " + textStr);
+        Log.d(TAG, "IsOngoing: " + isOngoing);
+        Log.d(TAG, "Category: " + category);
+        Log.d(TAG, "ActionCount: " + actionCount);
 
-        // Save using DataRepository
-        DataRepository.save(this, packageName, titleStr, textStr, timestamp);
+        // Save using DataRepository with new metadata fields
+        DataRepository.save(this, packageName, titleStr, textStr, timestamp, isOngoing, category, actionCount);
     }
 
     @Override
