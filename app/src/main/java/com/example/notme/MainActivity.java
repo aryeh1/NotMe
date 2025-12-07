@@ -7,17 +7,14 @@ import android.util.Log;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.provider.Settings;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import com.example.notme.data.DataRepository;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -25,8 +22,7 @@ import java.util.Locale;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "NotMe_MainActivity";
-    private static final String LOG_FILE = "notifications.txt";
-    private static final int READ_INTERVAL = 2000; // Read file every 2 seconds
+    private static final int READ_INTERVAL = 2000; // Read data every 2 seconds
 
     private TextView txtView;
     private TextView statusText;
@@ -35,8 +31,8 @@ public class MainActivity extends AppCompatActivity {
     private Button testBtn;
     private Button clearBtn;
 
-    private Handler fileReadHandler;
-    private Runnable fileReadRunnable;
+    private Handler dataReadHandler;
+    private Runnable dataReadRunnable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,16 +55,16 @@ public class MainActivity extends AppCompatActivity {
         testBtn.setOnClickListener(v -> testBroadcast());
         clearBtn.setOnClickListener(v -> clearLog());
 
-        // Set up file reading handler - reads notifications.txt every 2 seconds
-        fileReadHandler = new Handler();
-        fileReadRunnable = new Runnable() {
+        // Set up data reading handler - reads from repository every 2 seconds
+        dataReadHandler = new Handler();
+        dataReadRunnable = new Runnable() {
             @Override
             public void run() {
-                readNotificationFile();
-                fileReadHandler.postDelayed(this, READ_INTERVAL);
+                readNotificationData();
+                dataReadHandler.postDelayed(this, READ_INTERVAL);
             }
         };
-        Log.d(TAG, "onCreate: File reading handler initialized");
+        Log.d(TAG, "onCreate: Data reading handler initialized (Mode: " + DataRepository.getStorageMode() + ")");
 
         // Check permission on startup
         checkPermissionStatus();
@@ -118,104 +114,72 @@ public class MainActivity extends AppCompatActivity {
     private void testBroadcast() {
         Log.d(TAG, "testBroadcast: Sending test notification");
 
-        String timestamp = new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(new Date());
-        String testMessage = "TEST at " + timestamp + "\n" +
-                            "Package: com.example.test\n" +
-                            "Title: Test\n" +
-                            "Text: This is a test notification!\n" +
-                            "------\n";
+        String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
 
-        // Simulate a notification by directly updating the TextView
-        String currentText = txtView.getText().toString();
-        if (currentText.equals("Waiting for notifications...")) {
-            txtView.setText(testMessage);
-        } else {
-            txtView.setText(testMessage + currentText);
-        }
+        // Save test notification using DataRepository
+        DataRepository.save(this, "com.example.test", "Test", "This is a test notification!", timestamp);
 
-        Toast.makeText(this, "Test message added to log", Toast.LENGTH_SHORT).show();
+        // Refresh UI after short delay
+        new Handler().postDelayed(this::readNotificationData, 300);
+
+        Toast.makeText(this, "Test notification saved (" + DataRepository.getStorageMode() + ")", Toast.LENGTH_SHORT).show();
     }
 
     // Button handler: Clear the notification log
     private void clearLog() {
-        Log.d(TAG, "clearLog: Clearing notification log and file");
+        Log.d(TAG, "clearLog: Clearing notification log");
         txtView.setText("Waiting for notifications...");
 
-        // Clear the file
-        try {
-            File file = new File(getFilesDir(), LOG_FILE);
-            if (file.exists()) {
-                file.delete();
-                Log.d(TAG, "clearLog: File deleted successfully");
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "clearLog: Failed to delete file", e);
-        }
+        // Clear using DataRepository
+        DataRepository.clear(this);
 
-        Toast.makeText(this, "Log cleared", Toast.LENGTH_SHORT).show();
+        // Refresh UI after short delay
+        new Handler().postDelayed(this::readNotificationData, 300);
+
+        Toast.makeText(this, "Log cleared (" + DataRepository.getStorageMode() + ")", Toast.LENGTH_SHORT).show();
     }
 
-    // Read notifications from file and display in TextView
-    private void readNotificationFile() {
-        try {
-            File file = new File(getFilesDir(), LOG_FILE);
+    // Read notifications from repository and display in TextView
+    private void readNotificationData() {
+        // Run on background thread (database operations must be off main thread)
+        new Thread(() -> {
+            String data = DataRepository.getAllLogs(this);
 
-            if (!file.exists()) {
-                // File doesn't exist yet - no notifications recorded
-                return;
-            }
-
-            StringBuilder content = new StringBuilder();
-            BufferedReader reader = new BufferedReader(new FileReader(file));
-            String line;
-
-            while ((line = reader.readLine()) != null) {
-                content.append(line).append("\n");
-            }
-            reader.close();
-
-            // Update TextView with file contents
-            String fileContent = content.toString();
-            if (fileContent.isEmpty()) {
-                txtView.setText("Waiting for notifications...");
-            } else {
-                txtView.setText(fileContent);
-                Log.d(TAG, "readNotificationFile: Updated UI with " + fileContent.length() + " characters");
-            }
-
-        } catch (IOException e) {
-            Log.e(TAG, "readNotificationFile: Failed to read file", e);
-        }
+            // Update UI on main thread
+            runOnUiThread(() -> {
+                txtView.setText(data);
+            });
+        }).start();
     }
 
     // Re-check permission when app becomes visible (e.g., returning from Settings)
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d(TAG, "onResume: App visible, re-checking permission and starting file reader");
+        Log.d(TAG, "onResume: App visible, re-checking permission and starting data reader");
         checkPermissionStatus();
 
-        // Start file reading when app becomes visible
-        fileReadHandler.post(fileReadRunnable);
+        // Start data reading when app becomes visible
+        dataReadHandler.post(dataReadRunnable);
     }
 
-    // App going to background - stop file reading to save battery
+    // App going to background - stop data reading to save battery
     @Override
     protected void onPause() {
         super.onPause();
-        Log.d(TAG, "onPause: App going to background, stopping file reader");
+        Log.d(TAG, "onPause: App going to background, stopping data reader");
 
-        // Stop file reading when app goes to background
-        fileReadHandler.removeCallbacks(fileReadRunnable);
+        // Stop data reading when app goes to background
+        dataReadHandler.removeCallbacks(dataReadRunnable);
     }
 
-    // Stop file reading when activity is destroyed
+    // Stop data reading when activity is destroyed
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.d(TAG, "onDestroy: Stopping file reader");
+        Log.d(TAG, "onDestroy: Stopping data reader");
 
         // Stop the handler to prevent memory leaks
-        fileReadHandler.removeCallbacks(fileReadRunnable);
+        dataReadHandler.removeCallbacks(dataReadRunnable);
     }
 }
