@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
         moreBtn = findViewById(R.id.moreBtn);
 
         // Set up button click listeners
-        checkPermissionBtn.setOnClickListener(v -> checkPermissionStatus());
+        checkPermissionBtn.setOnClickListener(v -> checkPermissionStatus(true));
         openSettingsBtn.setOnClickListener(v -> openNotificationSettings());
         testBtn.setOnClickListener(v -> testBroadcast());
         moreBtn.setOnClickListener(v -> showMoreMenu());
@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate: Data reading handler initialized (Mode: " + DataRepository.getStorageMode() + ")");
 
         // Check permission on startup
-        checkPermissionStatus();
+        checkPermissionStatus(false);
     }
 
     // Helper method to check if notification access is granted
@@ -91,14 +91,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // Button handler: Check permission status
-    private void checkPermissionStatus() {
+    private void checkPermissionStatus(boolean toast) {
         boolean hasPermission = isNotificationServiceEnabled();
         Log.d(TAG, "checkPermissionStatus: " + hasPermission);
 
         if (hasPermission) {
             statusText.setText("Status: ✓ Permission GRANTED - Ready!");
             statusText.setTextColor(0xFF4CAF50); // Green
-            Toast.makeText(this, "Permission is granted! Listening for notifications.", Toast.LENGTH_SHORT).show();
+            if (toast) {
+                Toast.makeText(this, "Permission is granted! Listening for notifications.", Toast.LENGTH_SHORT).show();
+            }
         } else {
             statusText.setText("Status: ✗ Permission DENIED - Click button below");
             statusText.setTextColor(0xFFF44336); // Red
@@ -288,7 +290,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         Log.d(TAG, "onResume: App visible, re-checking permission and starting data reader");
-        checkPermissionStatus();
+        checkPermissionStatus(false);
 
         // Start data reading when app becomes visible
         dataReadHandler.post(dataReadRunnable);
