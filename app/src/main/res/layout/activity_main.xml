@@ -3,7 +3,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    android:paddingTop="16dp"
     android:fitsSystemWindows="true">
 
     <TextView
@@ -35,50 +37,40 @@
             android:id="@+id/checkPermissionBtn"
             style="@style/SimpleButton"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
             android:layout_weight="1"
             android:text="Check"
-            android:textSize="12sp"
+            android:textSize="9sp"
             android:layout_marginEnd="4dp" />
 
         <Button
             android:id="@+id/openSettingsBtn"
             style="@style/SimpleButton"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
             android:layout_weight="1"
             android:text="Settings"
-            android:textSize="12sp"
+            android:textSize="9sp"
             android:layout_marginEnd="4dp" />
 
         <Button
             android:id="@+id/testBtn"
             style="@style/SimpleButton"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
             android:layout_weight="1"
             android:text="Test"
-            android:textSize="12sp"
-            android:layout_marginEnd="4dp" />
-
-        <Button
-            android:id="@+id/clearBtn"
-            style="@style/SimpleButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Clear"
-            android:textSize="12sp"
+            android:textSize="9sp"
             android:layout_marginEnd="4dp" />
 
         <Button
             android:id="@+id/moreBtn"
             style="@style/SimpleButton"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.4"
-            android:text="⋮"
-            android:textSize="18sp" />
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:text="MORE"
+            android:textSize="9sp" />
     </LinearLayout>
 
     <TextView
@@ -94,6 +86,8 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:background="#EEEEEE"
+        android:layout_marginStart="-16dp"
+        android:layout_marginEnd="-16dp"
         android:padding="10dp">
 
         <TextView

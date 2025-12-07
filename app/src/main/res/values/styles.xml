@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Simple gray button style - no purple/accent colors -->
+    <!-- Simple black/white button style - no purple/accent colors -->
     <style name="SimpleButton" parent="Widget.AppCompat.Button">
-        <item name="android:backgroundTint">@android:color/darker_gray</item>
-        <item name="android:textColor">@android:color/white</item>
+        <item name="android:backgroundTint">#333333</item>
+        <item name="android:textColor">#FFFFFF</item>
+    </style>
+
+    <!-- Dialog theme with black text -->
+    <style name="DialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:textColor">#000000</item>
+        <item name="android:textColorPrimary">#000000</item>
     </style>
 </resources>

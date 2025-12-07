@@ -243,8 +243,8 @@ public class DataRepository {
         return parts.length > 0 ? parts[parts.length - 1] : packageName;
     }
 
-    // Export to CSV file
-    public static String exportToCSV(Context context) {
+    // Export to CSV file with user-chosen location
+    public static String exportToCSV(Context context, android.net.Uri uri) {
         if (!USE_DB) {
             return "Export only available in Database mode";
         }
@@ -256,14 +256,13 @@ public class DataRepository {
                 return "No notifications to export";
             }
 
-            // Create CSV file in Downloads
-            File downloadsDir = android.os.Environment.getExternalStoragePublicDirectory(
-                android.os.Environment.DIRECTORY_DOWNLOADS);
-            String timestamp = new java.text.SimpleDateFormat("yyyy-MM-dd_HH-mm-ss",
-                java.util.Locale.getDefault()).format(new java.util.Date());
-            File csvFile = new File(downloadsDir, "notme_export_" + timestamp + ".csv");
+            // Write to user-selected file
+            java.io.OutputStream outputStream = context.getContentResolver().openOutputStream(uri);
+            if (outputStream == null) {
+                return "Error: Could not open file";
+            }
 
-            FileWriter writer = new FileWriter(csvFile);
+            java.io.OutputStreamWriter writer = new java.io.OutputStreamWriter(outputStream);
 
             // Write header
             writer.write("Timestamp,Package,App,Title,Text\n");
@@ -281,9 +280,10 @@ public class DataRepository {
             }
 
             writer.close();
-            Log.d(TAG, "exportToCSV: Exported to " + csvFile.getAbsolutePath());
+            outputStream.close();
+            Log.d(TAG, "exportToCSV: Exported " + all.size() + " notifications");
 
-            return "Exported " + all.size() + " notifications to:\n" + csvFile.getAbsolutePath();
+            return "✓ Exported " + all.size() + " notifications successfully!";
 
         } catch (Exception e) {
             Log.e(TAG, "exportToCSV: Error", e);
