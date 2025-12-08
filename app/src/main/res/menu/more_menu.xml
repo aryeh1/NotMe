@@ -4,6 +4,9 @@
         android:id="@+id/menu_dashboard"
         android:title="📈 Dashboard" />
     <item
+        android:id="@+id/menu_advanced_search"
+        android:title="🔬 Research Tool" />
+    <item
         android:id="@+id/menu_stats"
         android:title="📊 Stats" />
     <item
