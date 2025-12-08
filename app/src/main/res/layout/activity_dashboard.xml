@@ -3,13 +3,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5">
+    android:background="#F5F5F5"
+    android:fitsSystemWindows="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="32dp">
 
         <!-- Header -->
         <LinearLayout
@@ -26,7 +30,7 @@
                 android:text="Dashboard"
                 android:textSize="28sp"
                 android:textStyle="bold"
-                android:textColor="#000000" />
+                android:textColor="#212121" />
 
             <Button
                 android:id="@+id/btn_back"
@@ -41,6 +45,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
+            app:cardBackgroundColor="#FFFFFF"
             app:cardCornerRadius="12dp"
             app:cardElevation="4dp">
 
@@ -56,7 +61,7 @@
                     android:text="📊 Overview"
                     android:textSize="20sp"
                     android:textStyle="bold"
-                    android:textColor="#000000"
+                    android:textColor="#212121"
                     android:paddingBottom="12dp" />
 
                 <LinearLayout
@@ -86,7 +91,7 @@
                             android:layout_height="wrap_content"
                             android:text="Total"
                             android:textSize="14sp"
-                            android:textColor="#666666" />
+                            android:textColor="#757575" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -111,7 +116,7 @@
                             android:layout_height="wrap_content"
                             android:text="Ongoing"
                             android:textSize="14sp"
-                            android:textColor="#666666" />
+                            android:textColor="#757575" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -136,7 +141,7 @@
                             android:layout_height="wrap_content"
                             android:text="Regular"
                             android:textSize="14sp"
-                            android:textColor="#666666" />
+                            android:textColor="#757575" />
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
@@ -144,9 +149,14 @@
 
         <!-- Top Apps Card -->
         <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_top_apps"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?android:attr/selectableItemBackground"
+            app:cardBackgroundColor="#FFFFFF"
             app:cardCornerRadius="12dp"
             app:cardElevation="4dp">
 
@@ -156,31 +166,52 @@
                 android:orientation="vertical"
                 android:padding="20dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="📱 Top Apps"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:textColor="#000000"
-                    android:paddingBottom="12dp" />
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="📱 Top Apps"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:textColor="#212121" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tap to explore ›"
+                        android:textSize="12sp"
+                        android:textColor="#1976D2" />
+                </LinearLayout>
 
                 <TextView
                     android:id="@+id/txt_top_apps"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
                     android:text="Loading..."
                     android:textSize="14sp"
-                    android:textColor="#000000"
-                    android:lineSpacingMultiplier="1.3" />
+                    android:textColor="#424242"
+                    android:lineSpacingMultiplier="1.3"
+                    android:fontFamily="monospace" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
         <!-- Categories Card -->
         <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_categories"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?android:attr/selectableItemBackground"
+            app:cardBackgroundColor="#FFFFFF"
             app:cardCornerRadius="12dp"
             app:cardElevation="4dp">
 
@@ -190,31 +221,52 @@
                 android:orientation="vertical"
                 android:padding="20dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="📂 By Category"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:textColor="#000000"
-                    android:paddingBottom="12dp" />
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="📂 By Category"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:textColor="#212121" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tap to explore ›"
+                        android:textSize="12sp"
+                        android:textColor="#1976D2" />
+                </LinearLayout>
 
                 <TextView
                     android:id="@+id/txt_categories"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
                     android:text="Loading..."
                     android:textSize="14sp"
-                    android:textColor="#000000"
-                    android:lineSpacingMultiplier="1.3" />
+                    android:textColor="#424242"
+                    android:lineSpacingMultiplier="1.3"
+                    android:fontFamily="monospace" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
         <!-- Activity by Hour Card -->
         <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_hourly"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?android:attr/selectableItemBackground"
+            app:cardBackgroundColor="#FFFFFF"
             app:cardCornerRadius="12dp"
             app:cardElevation="4dp">
 
@@ -224,31 +276,52 @@
                 android:orientation="vertical"
                 android:padding="20dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="🕐 Activity by Hour"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:textColor="#000000"
-                    android:paddingBottom="12dp" />
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="🕐 Activity by Hour"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:textColor="#212121" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="View details ›"
+                        android:textSize="12sp"
+                        android:textColor="#1976D2" />
+                </LinearLayout>
 
                 <TextView
                     android:id="@+id/txt_hourly"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
                     android:text="Loading..."
                     android:textSize="14sp"
-                    android:textColor="#000000"
-                    android:lineSpacingMultiplier="1.3" />
+                    android:textColor="#424242"
+                    android:lineSpacingMultiplier="1.3"
+                    android:fontFamily="monospace" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
         <!-- Last 7 Days Card -->
         <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_last_7_days"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?android:attr/selectableItemBackground"
+            app:cardBackgroundColor="#FFFFFF"
             app:cardCornerRadius="12dp"
             app:cardElevation="4dp">
 
@@ -258,23 +331,39 @@
                 android:orientation="vertical"
                 android:padding="20dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="📅 Last 7 Days"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:textColor="#000000"
-                    android:paddingBottom="12dp" />
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="📅 Last 7 Days"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:textColor="#212121" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tap to drill down ›"
+                        android:textSize="12sp"
+                        android:textColor="#1976D2" />
+                </LinearLayout>
 
                 <TextView
                     android:id="@+id/txt_last_7_days"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
                     android:text="Loading..."
                     android:textSize="14sp"
-                    android:textColor="#000000"
-                    android:lineSpacingMultiplier="1.3" />
+                    android:textColor="#424242"
+                    android:lineSpacingMultiplier="1.3"
+                    android:fontFamily="monospace" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 

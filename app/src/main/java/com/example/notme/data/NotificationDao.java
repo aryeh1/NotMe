@@ -45,6 +45,19 @@ public interface NotificationDao {
     @Query("SELECT strftime('%H', timestamp) as hour, COUNT(*) as count FROM notifications GROUP BY hour ORDER BY hour")
     List<HourCount> getHourlyDistribution();
 
+    // Drill-down queries
+    @Query("SELECT strftime('%Y-%m-%d', timestamp) as date, COUNT(*) as count FROM notifications WHERE packageName = :packageName GROUP BY date ORDER BY date DESC LIMIT 30")
+    List<DayCount> getPackageHistory(String packageName);
+
+    @Query("SELECT * FROM notifications WHERE strftime('%Y-%m-%d', timestamp) = :date ORDER BY id DESC")
+    List<NotificationEntity> getNotificationsByDate(String date);
+
+    @Query("SELECT * FROM notifications WHERE packageName = :packageName ORDER BY id DESC LIMIT 100")
+    List<NotificationEntity> getNotificationsByPackage(String packageName);
+
+    @Query("SELECT strftime('%Y-%m-%d', timestamp) as date, COUNT(*) as count FROM notifications WHERE category = :category GROUP BY date ORDER BY date DESC LIMIT 30")
+    List<DayCount> getCategoryHistory(String category);
+
     // Helper classes for query results
     class PackageCount {
         public String packageName;
