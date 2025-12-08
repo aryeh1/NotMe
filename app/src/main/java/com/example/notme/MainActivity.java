@@ -172,7 +172,10 @@ public class MainActivity extends AppCompatActivity {
         popup.setOnMenuItemClickListener(item -> {
             int id = item.getItemId();
 
-            if (id == R.id.menu_stats) {
+            if (id == R.id.menu_dashboard) {
+                openDashboard();
+                return true;
+            } else if (id == R.id.menu_stats) {
                 showStats();
                 return true;
             } else if (id == R.id.menu_export) {
@@ -196,6 +199,12 @@ public class MainActivity extends AppCompatActivity {
         });
 
         popup.show();
+    }
+
+    // Menu: Dashboard
+    private void openDashboard() {
+        Intent intent = new Intent(this, DashboardActivity.class);
+        startActivity(intent);
     }
 
     // Menu: Stats
