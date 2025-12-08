@@ -175,6 +175,9 @@ public class MainActivity extends AppCompatActivity {
             if (id == R.id.menu_dashboard) {
                 openDashboard();
                 return true;
+            } else if (id == R.id.menu_advanced_search) {
+                openResearchTool();
+                return true;
             } else if (id == R.id.menu_stats) {
                 showStats();
                 return true;
@@ -204,6 +207,12 @@ public class MainActivity extends AppCompatActivity {
     // Menu: Dashboard
     private void openDashboard() {
         Intent intent = new Intent(this, DashboardActivity.class);
+        startActivity(intent);
+    }
+
+    // Menu: Research Tool
+    private void openResearchTool() {
+        Intent intent = new Intent(this, ResearchActivity.class);
         startActivity(intent);
     }
 

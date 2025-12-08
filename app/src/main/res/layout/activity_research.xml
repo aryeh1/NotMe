@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:fitsSystemWindows="true"
+    android:background="#F5F5F5">
+
+    <!-- Header with title and actions -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:gravity="center_vertical"
+        android:background="#FFFFFF"
+        android:elevation="4dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Research Tool"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#212121" />
+
+        <Button
+            android:id="@+id/btn_export"
+            style="@style/SimpleButton"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:text="📤 Export"
+            android:textSize="12sp"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            android:layout_marginEnd="8dp" />
+
+        <Button
+            android:id="@+id/btn_back"
+            style="@style/SimpleButton"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:text="← Back"
+            android:textSize="12sp"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp" />
+    </LinearLayout>
+
+    <!-- Filters Card (Collapsible) -->
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        app:cardBackgroundColor="#FFFFFF"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="2dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Filter Header (clickable to expand/collapse) -->
+            <LinearLayout
+                android:id="@+id/filter_header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="12dp"
+                android:gravity="center_vertical"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="🔍 Filters"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="#212121" />
+
+                <TextView
+                    android:id="@+id/txt_filter_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0 active"
+                    android:textSize="12sp"
+                    android:textColor="#757575"
+                    android:layout_marginEnd="8dp" />
+
+                <TextView
+                    android:id="@+id/txt_expand_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="▼"
+                    android:textSize="12sp"
+                    android:textColor="#757575" />
+            </LinearLayout>
+
+            <!-- Filter Panel (expandable) -->
+            <LinearLayout
+                android:id="@+id/filter_panel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="12dp"
+                android:visibility="visible">
+
+                <!-- Date Range Row -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="8dp">
+
+                    <EditText
+                        android:id="@+id/edit_date_from"
+                        android:layout_width="0dp"
+                        android:layout_height="40dp"
+                        android:layout_weight="1"
+                        android:hint="From: YYYY-MM-DD"
+                        android:textSize="13sp"
+                        android:paddingLeft="8dp"
+                        android:paddingRight="8dp"
+                        android:background="@android:color/white"
+                        android:inputType="date"
+                        android:focusable="false"
+                        android:clickable="true" />
+
+                    <EditText
+                        android:id="@+id/edit_date_to"
+                        android:layout_width="0dp"
+                        android:layout_height="40dp"
+                        android:layout_weight="1"
+                        android:hint="To: YYYY-MM-DD"
+                        android:textSize="13sp"
+                        android:paddingLeft="8dp"
+                        android:paddingRight="8dp"
+                        android:background="@android:color/white"
+                        android:layout_marginStart="8dp"
+                        android:inputType="date"
+                        android:focusable="false"
+                        android:clickable="true" />
+                </LinearLayout>
+
+                <!-- App Filter -->
+                <Spinner
+                    android:id="@+id/spinner_app"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginBottom="8dp"
+                    android:spinnerMode="dropdown" />
+
+                <!-- Category Filter -->
+                <Spinner
+                    android:id="@+id/spinner_category"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginBottom="8dp"
+                    android:spinnerMode="dropdown" />
+
+                <!-- Text Search -->
+                <EditText
+                    android:id="@+id/edit_text_search"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:hint="Search in title/text..."
+                    android:textSize="13sp"
+                    android:paddingLeft="8dp"
+                    android:paddingRight="8dp"
+                    android:background="@android:color/white"
+                    android:layout_marginBottom="8dp"
+                    android:inputType="text" />
+
+                <!-- Ongoing Filter -->
+                <Spinner
+                    android:id="@+id/spinner_ongoing"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginBottom="8dp"
+                    android:spinnerMode="dropdown" />
+
+                <!-- Action Buttons -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="end">
+
+                    <Button
+                        android:id="@+id/btn_clear_filters"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:text="Clear All"
+                        android:textSize="12sp"
+                        android:paddingLeft="12dp"
+                        android:paddingRight="12dp"
+                        android:layout_marginEnd="8dp"
+                        style="?android:attr/borderlessButtonStyle" />
+
+                    <Button
+                        android:id="@+id/btn_apply_filters"
+                        style="@style/SimpleButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:text="Apply"
+                        android:textSize="12sp"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="16dp" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Results Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="4dp"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/txt_results_count"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="0 results"
+            android:textSize="14sp"
+            android:textColor="#757575" />
+
+        <Spinner
+            android:id="@+id/spinner_sort"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:spinnerMode="dropdown" />
+    </LinearLayout>
+
+    <!-- Results List -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/results_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingTop="4dp"
+        android:paddingBottom="8dp"
+        android:clipToPadding="false" />
+
+</LinearLayout>

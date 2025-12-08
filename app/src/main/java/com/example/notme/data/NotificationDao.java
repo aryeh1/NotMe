@@ -58,6 +58,17 @@ public interface NotificationDao {
     @Query("SELECT strftime('%Y-%m-%d', timestamp) as date, COUNT(*) as count FROM notifications WHERE category = :category GROUP BY date ORDER BY date DESC LIMIT 30")
     List<DayCount> getCategoryHistory(String category);
 
+    // Advanced search query - flexible filtering
+    @androidx.room.RawQuery
+    List<NotificationEntity> searchWithFilters(androidx.sqlite.db.SupportSQLiteQuery query);
+
+    // Get distinct values for filters
+    @Query("SELECT DISTINCT packageName FROM notifications ORDER BY packageName")
+    List<String> getAllPackages();
+
+    @Query("SELECT DISTINCT category FROM notifications WHERE category IS NOT NULL AND category != '' ORDER BY category")
+    List<String> getAllCategories();
+
     // Helper classes for query results
     class PackageCount {
         public String packageName;
