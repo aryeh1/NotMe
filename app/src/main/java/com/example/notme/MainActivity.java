@@ -2,6 +2,7 @@ package com.example.notme;
 
 import android.os.Bundle;
 import android.util.Log;
+import com.example.notme.LogWrapper;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -42,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Log.d(TAG, "onCreate: App started");
+        LogWrapper.d(TAG, "onCreate: App started");
 
         // Find all views
         txtView = findViewById(R.id.notificationLog);
@@ -63,11 +64,11 @@ public class MainActivity extends AppCompatActivity {
         notificationsLiveData.observe(this, new Observer<List<NotificationEntity>>() {
             @Override
             public void onChanged(List<NotificationEntity> entities) {
-                Log.d(TAG, "LiveData observer triggered: " + (entities != null ? entities.size() : 0) + " notifications");
+                LogWrapper.d(TAG, "LiveData observer triggered: " + (entities != null ? entities.size() : 0) + " notifications");
                 updateUI(entities);
             }
         });
-        Log.d(TAG, "onCreate: LiveData observer initialized (Mode: " + DataRepository.getStorageMode() + ")");
+        LogWrapper.d(TAG, "onCreate: LiveData observer initialized (Mode: " + DataRepository.getStorageMode() + ")");
 
         // Check permission on startup
         checkPermissionStatus(false);
@@ -110,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
     // Button handler: Check permission status
     private void checkPermissionStatus(boolean toast) {
         boolean hasPermission = isNotificationServiceEnabled();
-        Log.d(TAG, "checkPermissionStatus: " + hasPermission);
+        LogWrapper.d(TAG, "checkPermissionStatus: " + hasPermission);
 
         if (hasPermission) {
             statusText.setText("Status: ✓ Permission GRANTED - Ready!");
@@ -127,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
 
     // Button handler: Open notification settings
     private void openNotificationSettings() {
-        Log.d(TAG, "openNotificationSettings: Opening settings");
+        LogWrapper.d(TAG, "openNotificationSettings: Opening settings");
         Toast.makeText(this, "Opening settings... Find 'NotMe' and toggle it ON", Toast.LENGTH_LONG).show();
         Intent intent = new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS);
         startActivity(intent);
@@ -135,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
 
     // Button handler: Test the broadcast receiver
     private void testBroadcast() {
-        Log.d(TAG, "testBroadcast: Sending test notification");
+        LogWrapper.d(TAG, "testBroadcast: Sending test notification");
 
         String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
 
@@ -152,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
             .setTitle("Clear All")
             .setMessage("Delete all notifications from database?")
             .setPositiveButton("Clear", (dialog, which) -> {
-                Log.d(TAG, "clearLog: Clearing notification log");
+                LogWrapper.d(TAG, "clearLog: Clearing notification log");
 
                 // Clear using DataRepository
                 // LiveData will automatically update the UI when data changes
@@ -286,7 +287,7 @@ public class MainActivity extends AppCompatActivity {
 
     // Menu: Logcat Console
     private void openLogcatConsole() {
-        Log.d(TAG, "openLogcatConsole: Opening Logcat Console");
+        LogWrapper.d(TAG, "openLogcatConsole: Opening Logcat Console");
         Intent intent = new Intent(this, LogcatActivity.class);
         startActivity(intent);
     }
@@ -316,7 +317,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d(TAG, "onResume: App visible, re-checking permission");
+        LogWrapper.d(TAG, "onResume: App visible, re-checking permission");
         checkPermissionStatus(false);
     }
 
