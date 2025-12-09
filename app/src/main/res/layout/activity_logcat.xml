@@ -174,44 +174,6 @@
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- Emergency System Logs Button -->
-    <com.google.android.material.card.MaterialCardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="4dp"
-        app:cardBackgroundColor="#FFF3E0"
-        app:cardCornerRadius="8dp"
-        app:cardElevation="2dp">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="12dp"
-            android:gravity="center_vertical">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="⚠️ Fetch raw system logcat (emergency only)"
-                android:textSize="12sp"
-                android:textColor="#E65100" />
-
-            <Button
-                android:id="@+id/btn_fetch_system"
-                style="@style/SimpleButton"
-                android:layout_width="wrap_content"
-                android:layout_height="32dp"
-                android:text="Fetch"
-                android:textSize="11sp"
-                android:paddingLeft="12dp"
-                android:paddingRight="12dp" />
-        </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
-
     <!-- Status -->
     <LinearLayout
         android:layout_width="match_parent"
