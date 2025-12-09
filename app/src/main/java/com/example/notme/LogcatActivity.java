@@ -20,11 +20,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class LogcatActivity extends AppCompatActivity {
     private static final String TAG = "NotMe_LogcatActivity";
@@ -40,7 +36,6 @@ public class LogcatActivity extends AppCompatActivity {
 
     private Handler updateHandler;
     private Runnable updateRunnable;
-    private ExecutorService executorService;
 
     private String currentFilter = "ALL";
     private boolean autoScroll = true;
@@ -61,7 +56,6 @@ public class LogcatActivity extends AppCompatActivity {
         setupListeners();
 
         updateHandler = new Handler(Looper.getMainLooper());
-        executorService = Executors.newSingleThreadExecutor();
 
         // Start periodic updates
         startPeriodicUpdates();
@@ -76,7 +70,7 @@ public class LogcatActivity extends AppCompatActivity {
         logScrollView = findViewById(R.id.log_scroll_view);
         filterPanel = findViewById(R.id.filter_panel);
 
-        statusText.setText("Reading from internal buffer (PID: " + myPid + ")");
+        statusText.setText("Showing app logs since launch (PID: " + myPid + ", updates every 3s)");
 
         // Detect manual scrolling
         logScrollView.getViewTreeObserver().addOnScrollChangedListener(() -> {
@@ -95,9 +89,6 @@ public class LogcatActivity extends AppCompatActivity {
 
         Button copyBtn = findViewById(R.id.btn_copy);
         copyBtn.setOnClickListener(v -> copyToClipboard());
-
-        Button fetchSystemBtn = findViewById(R.id.btn_fetch_system);
-        fetchSystemBtn.setOnClickListener(v -> fetchSystemLogs());
 
         // Toggle filter panel
         View filterHeader = findViewById(R.id.filter_header);
@@ -133,18 +124,30 @@ public class LogcatActivity extends AppCompatActivity {
 
         SpannableStringBuilder builder = new SpannableStringBuilder();
 
-        for (LogWrapper.LogEntry entry : entries) {
+        for (int i = 0; i < entries.size(); i++) {
+            LogWrapper.LogEntry entry = entries.get(i);
             String line = entry.toString();
             int start = builder.length();
+
+            // Add visual separator line
+            builder.append("─────────────────────────────────\n");
+
             builder.append(line);
             builder.append("\n");
             int end = builder.length() - 1;
 
+            // Color the entire log entry
             builder.setSpan(
                 new ForegroundColorSpan(entry.getColor()),
-                start, end,
+                start,
+                end,
                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
             );
+        }
+
+        // Add final separator
+        if (entries.size() > 0) {
+            builder.append("─────────────────────────────────\n");
         }
 
         logText.setText(builder);
@@ -259,60 +262,6 @@ public class LogcatActivity extends AppCompatActivity {
         LogWrapper.d(TAG, "copyToClipboard: Copied " + entries.size() + " lines");
     }
 
-    private void fetchSystemLogs() {
-        LogWrapper.d(TAG, "fetchSystemLogs: Fetching raw system logcat");
-        Toast.makeText(this, "Fetching system logs...", Toast.LENGTH_SHORT).show();
-
-        executorService.execute(() -> {
-            try {
-                // Clear previous system logs
-                Runtime.getRuntime().exec(new String[]{"logcat", "-c"}).waitFor();
-                Thread.sleep(100);
-
-                // Fetch recent logs with our PID
-                String filterSpec = currentFilter.equals("ALL") ? "*:D" : "*:" + currentFilter;
-                String[] cmd = {"logcat", "-d", "-v", "time", "--pid=" + myPid, filterSpec};
-
-                Process process = Runtime.getRuntime().exec(cmd);
-                BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(process.getInputStream()), 8192);
-
-                final StringBuilder systemLogs = new StringBuilder();
-                String line;
-                int lineCount = 0;
-
-                while ((line = reader.readLine()) != null && lineCount < 500) {
-                    systemLogs.append(line).append("\n");
-                    lineCount++;
-                }
-
-                reader.close();
-                process.destroy();
-
-                final int finalCount = lineCount;
-                runOnUiThread(() -> {
-                    if (finalCount > 0) {
-                        SpannableStringBuilder builder = new SpannableStringBuilder();
-                        builder.append("=== SYSTEM LOGS SNAPSHOT ===\n");
-                        builder.append(systemLogs.toString());
-                        builder.append("\n=== END SNAPSHOT ===\n");
-
-                        logText.setText(builder);
-                        Toast.makeText(this, "Fetched " + finalCount + " system log lines", Toast.LENGTH_SHORT).show();
-                        LogWrapper.d(TAG, "fetchSystemLogs: Fetched " + finalCount + " lines");
-                    } else {
-                        Toast.makeText(this, "No system logs found", Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-            } catch (Exception e) {
-                LogWrapper.e(TAG, "fetchSystemLogs: Error fetching system logs", e);
-                runOnUiThread(() ->
-                    Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show());
-            }
-        });
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -333,10 +282,6 @@ public class LogcatActivity extends AppCompatActivity {
         LogWrapper.d(TAG, "onDestroy: Cleaning up");
 
         stopPeriodicUpdates();
-
-        if (executorService != null) {
-            executorService.shutdownNow();
-        }
 
         if (updateHandler != null) {
             updateHandler.removeCallbacksAndMessages(null);

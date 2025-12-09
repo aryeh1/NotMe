@@ -71,8 +71,37 @@ public class LogWrapper {
      */
     public static void e(String tag, String message, Throwable throwable) {
         Log.e(tag, message, throwable);
-        String fullMessage = message + " | " + throwable.toString();
-        getInstance().addToBuffer("E", tag, fullMessage);
+
+        // Capture full stack trace
+        StringBuilder fullMessage = new StringBuilder(message);
+        fullMessage.append("\n  Exception: ").append(throwable.toString());
+
+        // Add stack trace elements
+        StackTraceElement[] stackTrace = throwable.getStackTrace();
+        int maxFrames = Math.min(stackTrace.length, 10); // Limit to 10 frames
+        for (int i = 0; i < maxFrames; i++) {
+            fullMessage.append("\n    at ").append(stackTrace[i].toString());
+        }
+
+        if (stackTrace.length > maxFrames) {
+            fullMessage.append("\n    ... ").append(stackTrace.length - maxFrames).append(" more");
+        }
+
+        // Add cause if present
+        Throwable cause = throwable.getCause();
+        if (cause != null) {
+            fullMessage.append("\n  Caused by: ").append(cause.toString());
+            StackTraceElement[] causeTrace = cause.getStackTrace();
+            int maxCauseFrames = Math.min(causeTrace.length, 5);
+            for (int i = 0; i < maxCauseFrames; i++) {
+                fullMessage.append("\n    at ").append(causeTrace[i].toString());
+            }
+            if (causeTrace.length > maxCauseFrames) {
+                fullMessage.append("\n    ... ").append(causeTrace.length - maxCauseFrames).append(" more");
+            }
+        }
+
+        getInstance().addToBuffer("E", tag, fullMessage.toString());
     }
 
     private void addToBuffer(String level, String tag, String message) {
