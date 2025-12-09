@@ -19,6 +19,9 @@
         android:id="@+id/menu_search"
         android:title="🔍 Search" />
     <item
+        android:id="@+id/menu_logcat"
+        android:title="📝 Logcat Console" />
+    <item
         android:id="@+id/menu_compact"
         android:title="🗜️ Compact DB" />
     <item
