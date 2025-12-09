@@ -2,6 +2,7 @@ package com.example.notme.data;
 
 import android.content.Context;
 import android.util.Log;
+import com.example.notme.LogWrapper;
 
 import androidx.lifecycle.LiveData;
 
@@ -34,10 +35,10 @@ public class DataRepository {
                     NotificationEntity entity = new NotificationEntity(packageName, title, text, timestamp,
                             isOngoing, category, actionCount);
                     AppDatabase.getInstance(context).dao().insert(entity);
-                    Log.d(TAG, "save: Saved to DATABASE with metadata (ongoing=" + isOngoing +
+                    LogWrapper.d(TAG, "save: Saved to DATABASE with metadata (ongoing=" + isOngoing +
                             ", category=" + category + ", actions=" + actionCount + ")");
                 } catch (Exception e) {
-                    Log.e(TAG, "save: Database error", e);
+                    LogWrapper.e(TAG, "save: Database error", e);
                 }
             });
         } else {
@@ -55,9 +56,9 @@ public class DataRepository {
 
                     writer.write(logEntry);
                     writer.close();
-                    Log.d(TAG, "save: Saved to FILE");
+                    LogWrapper.d(TAG, "save: Saved to FILE");
                 } catch (IOException e) {
-                    Log.e(TAG, "save: File error", e);
+                    LogWrapper.e(TAG, "save: File error", e);
                 }
             });
         }
@@ -88,11 +89,11 @@ public class DataRepository {
                       .append("------\n");
                 }
 
-                Log.d(TAG, "getAllLogs: Retrieved from DATABASE (" + entities.size() + " items)");
+                LogWrapper.d(TAG, "getAllLogs: Retrieved from DATABASE (" + entities.size() + " items)");
                 return sb.toString();
 
             } catch (Exception e) {
-                Log.e(TAG, "getAllLogs: Database error", e);
+                LogWrapper.e(TAG, "getAllLogs: Database error", e);
                 return "Error reading database";
             }
         } else {
@@ -114,11 +115,11 @@ public class DataRepository {
                 reader.close();
 
                 String fileContent = content.toString();
-                Log.d(TAG, "getAllLogs: Retrieved from FILE");
+                LogWrapper.d(TAG, "getAllLogs: Retrieved from FILE");
                 return fileContent.isEmpty() ? "Waiting for notifications..." : fileContent;
 
             } catch (IOException e) {
-                Log.e(TAG, "getAllLogs: File error", e);
+                LogWrapper.e(TAG, "getAllLogs: File error", e);
                 return "Error reading file";
             }
         }
@@ -131,9 +132,9 @@ public class DataRepository {
             executor.execute(() -> {
                 try {
                     AppDatabase.getInstance(context).dao().deleteAll();
-                    Log.d(TAG, "clear: Cleared DATABASE");
+                    LogWrapper.d(TAG, "clear: Cleared DATABASE");
                 } catch (Exception e) {
-                    Log.e(TAG, "clear: Database error", e);
+                    LogWrapper.e(TAG, "clear: Database error", e);
                 }
             });
         } else {
@@ -143,10 +144,10 @@ public class DataRepository {
                     File file = new File(context.getFilesDir(), LOG_FILE);
                     if (file.exists()) {
                         file.delete();
-                        Log.d(TAG, "clear: Cleared FILE");
+                        LogWrapper.d(TAG, "clear: Cleared FILE");
                     }
                 } catch (Exception e) {
-                    Log.e(TAG, "clear: File error", e);
+                    LogWrapper.e(TAG, "clear: File error", e);
                 }
             });
         }
@@ -193,7 +194,7 @@ public class DataRepository {
             );
 
         } catch (Exception e) {
-            Log.e(TAG, "getStats: Error", e);
+            LogWrapper.e(TAG, "getStats: Error", e);
             return "Error getting stats";
         }
     }
@@ -239,7 +240,7 @@ public class DataRepository {
             return sb.toString();
 
         } catch (Exception e) {
-            Log.e(TAG, "getSenders: Error", e);
+            LogWrapper.e(TAG, "getSenders: Error", e);
             return "Error analyzing senders";
         }
     }
@@ -300,12 +301,12 @@ public class DataRepository {
 
             writer.close();
             outputStream.close();
-            Log.d(TAG, "exportToCSV: Exported " + all.size() + " notifications");
+            LogWrapper.d(TAG, "exportToCSV: Exported " + all.size() + " notifications");
 
             return "✓ Exported " + all.size() + " notifications successfully!";
 
         } catch (Exception e) {
-            Log.e(TAG, "exportToCSV: Error", e);
+            LogWrapper.e(TAG, "exportToCSV: Error", e);
             return "Error exporting: " + e.getMessage();
         }
     }
@@ -356,7 +357,7 @@ public class DataRepository {
             return "Found " + count + " results:\n\n" + sb.toString();
 
         } catch (Exception e) {
-            Log.e(TAG, "search: Error", e);
+            LogWrapper.e(TAG, "search: Error", e);
             return "Error searching";
         }
     }
@@ -379,7 +380,7 @@ public class DataRepository {
             long sizeAfter = dbFileAfter.exists() ? dbFileAfter.length() : 0;
             long saved = sizeBefore - sizeAfter;
 
-            Log.d(TAG, "compactDB: Before=" + sizeBefore + " After=" + sizeAfter + " Saved=" + saved);
+            LogWrapper.d(TAG, "compactDB: Before=" + sizeBefore + " After=" + sizeAfter + " Saved=" + saved);
 
             return String.format(
                 "Database compacted!\n\n" +
@@ -392,7 +393,7 @@ public class DataRepository {
             );
 
         } catch (Exception e) {
-            Log.e(TAG, "compactDB: Error", e);
+            LogWrapper.e(TAG, "compactDB: Error", e);
             return "Error compacting: " + e.getMessage();
         }
     }

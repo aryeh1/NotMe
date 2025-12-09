@@ -3,6 +3,7 @@ package com.example.notme;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import android.util.Log;
+import com.example.notme.LogWrapper;
 
 import com.example.notme.data.DataRepository;
 
@@ -17,7 +18,7 @@ public class NotificationService extends NotificationListenerService {
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.d(TAG, "onCreate: NotificationService started");
+        LogWrapper.d(TAG, "onCreate: NotificationService started");
     }
 
     @Override
@@ -49,7 +50,7 @@ public class NotificationService extends NotificationListenerService {
         }
 
         // Log consolidated notification info
-        Log.d(TAG, String.format("onNotificationPosted: pkg=%s, title='%s', ongoing=%b, category=%s, actions=%d",
+        LogWrapper.d(TAG, String.format("onNotificationPosted: pkg=%s, title='%s', ongoing=%b, category=%s, actions=%d",
             packageName, titleStr, isOngoing, category, actionCount));
 
         // Save using DataRepository with new metadata fields
@@ -58,12 +59,12 @@ public class NotificationService extends NotificationListenerService {
 
     @Override
     public void onNotificationRemoved(StatusBarNotification sbn) {
-        Log.d(TAG, "onNotificationRemoved: " + sbn.getPackageName());
+        LogWrapper.d(TAG, "onNotificationRemoved: " + sbn.getPackageName());
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d(TAG, "onDestroy: NotificationService stopped");
+        LogWrapper.d(TAG, "onDestroy: NotificationService stopped");
     }
 }
