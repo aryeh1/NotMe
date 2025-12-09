@@ -1,27 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="?attr/colorSurface">
+    android:fitsSystemWindows="true"
+    android:background="#F5F5F5">
 
-    <!-- Top Bar -->
+    <!-- Header with title and actions -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="12dp"
-        android:background="?attr/colorPrimary"
-        android:gravity="center_vertical">
-
-        <Button
-            android:id="@+id/backBtn"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:text="←"
-            android:textSize="20sp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:textColor="?attr/colorOnPrimary" />
+        android:padding="16dp"
+        android:gravity="center_vertical"
+        android:background="#FFFFFF"
+        android:elevation="4dp">
 
         <TextView
             android:layout_width="0dp"
@@ -29,148 +23,204 @@
             android:layout_weight="1"
             android:text="Logcat Console"
             android:textSize="20sp"
-            android:textColor="?attr/colorOnPrimary"
             android:textStyle="bold"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp" />
+            android:textColor="#212121" />
 
         <Button
-            android:id="@+id/clearBtn"
+            android:id="@+id/btn_clear"
+            style="@style/SimpleButton"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="36dp"
             android:text="Clear"
             android:textSize="12sp"
-            android:background="?attr/selectableItemBackground"
-            android:textColor="?attr/colorOnPrimary"
-            android:padding="8dp" />
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            android:layout_marginEnd="8dp" />
+
+        <Button
+            android:id="@+id/btn_back"
+            style="@style/SimpleButton"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:text="← Back"
+            android:textSize="12sp"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp" />
     </LinearLayout>
 
-    <!-- Filter Buttons -->
-    <HorizontalScrollView
+    <!-- Filters Card (Collapsible) -->
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:scrollbars="none"
-        android:background="?attr/colorSurfaceVariant">
+        android:layout_margin="8dp"
+        app:cardBackgroundColor="#FFFFFF"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="2dp">
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="8dp">
-
-            <Button
-                android:id="@+id/filterAll"
-                android:layout_width="wrap_content"
-                android:layout_height="36dp"
-                android:text="ALL"
-                android:textSize="12sp"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
-                android:layout_marginEnd="8dp"
-                style="@style/Widget.Material3.Button.TonalButton" />
-
-            <Button
-                android:id="@+id/filterDebug"
-                android:layout_width="wrap_content"
-                android:layout_height="36dp"
-                android:text="DEBUG"
-                android:textSize="12sp"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
-                android:layout_marginEnd="8dp"
-                style="@style/Widget.Material3.Button.OutlinedButton" />
-
-            <Button
-                android:id="@+id/filterInfo"
-                android:layout_width="wrap_content"
-                android:layout_height="36dp"
-                android:text="INFO"
-                android:textSize="12sp"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
-                android:layout_marginEnd="8dp"
-                style="@style/Widget.Material3.Button.OutlinedButton" />
-
-            <Button
-                android:id="@+id/filterWarn"
-                android:layout_width="wrap_content"
-                android:layout_height="36dp"
-                android:text="WARN"
-                android:textSize="12sp"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
-                android:layout_marginEnd="8dp"
-                style="@style/Widget.Material3.Button.OutlinedButton" />
-
-            <Button
-                android:id="@+id/filterError"
-                android:layout_width="wrap_content"
-                android:layout_height="36dp"
-                android:text="ERROR"
-                android:textSize="12sp"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
-                style="@style/Widget.Material3.Button.OutlinedButton" />
-        </LinearLayout>
-    </HorizontalScrollView>
-
-    <!-- Status Info -->
-    <TextView
-        android:id="@+id/statusText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Initializing..."
-        android:padding="8dp"
-        android:textSize="12sp"
-        android:textColor="?attr/colorOnSurfaceVariant"
-        android:background="?attr/colorSurfaceVariant" />
-
-    <!-- Log Display -->
-    <ScrollView
-        android:id="@+id/logScrollView"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:padding="8dp"
-        android:scrollbars="vertical">
-
-        <TextView
-            android:id="@+id/logText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Waiting for logs..."
-            android:textSize="11sp"
-            android:fontFamily="monospace"
-            android:textColor="?attr/colorOnSurface"
-            android:lineSpacingExtra="2dp" />
-    </ScrollView>
+            android:orientation="vertical">
 
-    <!-- Bottom Controls -->
+            <!-- Filter Header -->
+            <LinearLayout
+                android:id="@+id/filter_header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="12dp"
+                android:gravity="center_vertical"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="🔍 Filter Level"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="#212121" />
+
+                <TextView
+                    android:id="@+id/txt_current_filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ALL"
+                    android:textSize="12sp"
+                    android:textColor="#1976D2"
+                    android:textStyle="bold"
+                    android:layout_marginEnd="8dp" />
+
+                <TextView
+                    android:id="@+id/txt_expand_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="▼"
+                    android:textSize="12sp"
+                    android:textColor="#757575" />
+            </LinearLayout>
+
+            <!-- Filter Panel -->
+            <LinearLayout
+                android:id="@+id/filter_panel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="12dp"
+                android:visibility="gone">
+
+                <Button
+                    android:id="@+id/btn_filter_all"
+                    style="@style/SimpleButton"
+                    android:layout_width="0dp"
+                    android:layout_height="36dp"
+                    android:layout_weight="1"
+                    android:text="ALL"
+                    android:textSize="11sp"
+                    android:layout_marginEnd="4dp" />
+
+                <Button
+                    android:id="@+id/btn_filter_debug"
+                    style="@style/SimpleButton"
+                    android:layout_width="0dp"
+                    android:layout_height="36dp"
+                    android:layout_weight="1"
+                    android:text="DEBUG"
+                    android:textSize="11sp"
+                    android:layout_marginEnd="4dp" />
+
+                <Button
+                    android:id="@+id/btn_filter_info"
+                    style="@style/SimpleButton"
+                    android:layout_width="0dp"
+                    android:layout_height="36dp"
+                    android:layout_weight="1"
+                    android:text="INFO"
+                    android:textSize="11sp"
+                    android:layout_marginEnd="4dp" />
+
+                <Button
+                    android:id="@+id/btn_filter_warn"
+                    style="@style/SimpleButton"
+                    android:layout_width="0dp"
+                    android:layout_height="36dp"
+                    android:layout_weight="1"
+                    android:text="WARN"
+                    android:textSize="11sp"
+                    android:layout_marginEnd="4dp" />
+
+                <Button
+                    android:id="@+id/btn_filter_error"
+                    style="@style/SimpleButton"
+                    android:layout_width="0dp"
+                    android:layout_height="36dp"
+                    android:layout_weight="1"
+                    android:text="ERROR"
+                    android:textSize="11sp" />
+            </LinearLayout>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Status -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="8dp"
-        android:background="?attr/colorSurfaceVariant"
-        android:gravity="center">
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="4dp"
+        android:gravity="center_vertical">
 
         <TextView
-            android:id="@+id/logCountText"
+            android:id="@+id/txt_status"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Lines: 0"
+            android:text="Initializing..."
             android:textSize="12sp"
-            android:textColor="?attr/colorOnSurfaceVariant" />
+            android:textColor="#757575" />
 
-        <Button
-            android:id="@+id/scrollDownBtn"
+        <TextView
+            android:id="@+id/txt_log_count"
             android:layout_width="wrap_content"
-            android:layout_height="36dp"
-            android:text="↓ Bottom"
+            android:layout_height="wrap_content"
+            android:text="0 lines"
             android:textSize="12sp"
-            android:paddingStart="12dp"
-            android:paddingEnd="12dp"
-            style="@style/Widget.Material3.Button.TonalButton" />
+            android:textColor="#757575" />
     </LinearLayout>
+
+    <!-- Log Display Card -->
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
+        app:cardBackgroundColor="#FFFFFF"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="2dp">
+
+        <ScrollView
+            android:id="@+id/log_scroll_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="12dp"
+            android:scrollbars="vertical">
+
+            <TextView
+                android:id="@+id/txt_log_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Waiting for logs..."
+                android:textSize="11sp"
+                android:fontFamily="monospace"
+                android:textColor="#212121"
+                android:lineSpacingExtra="2dp" />
+        </ScrollView>
+    </com.google.android.material.card.MaterialCardView>
+
 </LinearLayout>
