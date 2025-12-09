@@ -190,6 +190,9 @@ public class MainActivity extends AppCompatActivity {
             } else if (id == R.id.menu_search) {
                 showSearch();
                 return true;
+            } else if (id == R.id.menu_logcat) {
+                openLogcatConsole();
+                return true;
             } else if (id == R.id.menu_compact) {
                 compactDB();
                 return true;
@@ -279,6 +282,13 @@ public class MainActivity extends AppCompatActivity {
             })
             .setNegativeButton("Cancel", null)
             .show();
+    }
+
+    // Menu: Logcat Console
+    private void openLogcatConsole() {
+        Log.d(TAG, "openLogcatConsole: Opening Logcat Console");
+        Intent intent = new Intent(this, LogcatActivity.class);
+        startActivity(intent);
     }
 
     // Menu: Compact DB

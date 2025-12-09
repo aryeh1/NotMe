@@ -17,13 +17,11 @@ public class NotificationService extends NotificationListenerService {
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.d(TAG, "onCreate: NotificationService started!");
+        Log.d(TAG, "onCreate: NotificationService started");
     }
 
     @Override
     public void onNotificationPosted(StatusBarNotification sbn) {
-        Log.d(TAG, "onNotificationPosted: Notification received!");
-
         // Extract basic information from the notification
         String packageName = sbn.getPackageName();
         CharSequence title = sbn.getNotification().extras.getCharSequence("android.title");
@@ -50,12 +48,9 @@ public class NotificationService extends NotificationListenerService {
             actionCount = sbn.getNotification().actions.length;
         }
 
-        Log.d(TAG, "Package: " + packageName);
-        Log.d(TAG, "Title: " + titleStr);
-        Log.d(TAG, "Text: " + textStr);
-        Log.d(TAG, "IsOngoing: " + isOngoing);
-        Log.d(TAG, "Category: " + category);
-        Log.d(TAG, "ActionCount: " + actionCount);
+        // Log consolidated notification info
+        Log.d(TAG, String.format("onNotificationPosted: pkg=%s, title='%s', ongoing=%b, category=%s, actions=%d",
+            packageName, titleStr, isOngoing, category, actionCount));
 
         // Save using DataRepository with new metadata fields
         DataRepository.save(this, packageName, titleStr, textStr, timestamp, isOngoing, category, actionCount);
