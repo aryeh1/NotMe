@@ -107,7 +107,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="12dp"
+                android:padding="8dp"
                 android:visibility="visible">
 
                 <!-- Date Range Row -->
@@ -115,19 +115,19 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:layout_marginBottom="8dp">
+                    android:layout_marginBottom="6dp">
 
                     <EditText
                         android:id="@+id/edit_date_from"
                         android:layout_width="0dp"
-                        android:layout_height="40dp"
+                        android:layout_height="36dp"
                         android:layout_weight="1"
                         android:hint="From: YYYY-MM-DD"
-                        android:textSize="13sp"
+                        android:textSize="12sp"
                         android:textColor="#000000"
                         android:textColorHint="#757575"
-                        android:paddingLeft="8dp"
-                        android:paddingRight="8dp"
+                        android:paddingLeft="6dp"
+                        android:paddingRight="6dp"
                         android:background="@android:color/white"
                         android:inputType="date"
                         android:focusable="false"
@@ -136,59 +136,73 @@
                     <EditText
                         android:id="@+id/edit_date_to"
                         android:layout_width="0dp"
-                        android:layout_height="40dp"
+                        android:layout_height="36dp"
                         android:layout_weight="1"
                         android:hint="To: YYYY-MM-DD"
-                        android:textSize="13sp"
+                        android:textSize="12sp"
                         android:textColor="#000000"
                         android:textColorHint="#757575"
-                        android:paddingLeft="8dp"
-                        android:paddingRight="8dp"
+                        android:paddingLeft="6dp"
+                        android:paddingRight="6dp"
                         android:background="@android:color/white"
-                        android:layout_marginStart="8dp"
+                        android:layout_marginStart="6dp"
                         android:inputType="date"
                         android:focusable="false"
                         android:clickable="true" />
                 </LinearLayout>
 
-                <!-- App Filter -->
-                <Spinner
-                    android:id="@+id/spinner_app"
+                <!-- App and Category in one row -->
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:layout_marginBottom="8dp"
-                    android:spinnerMode="dropdown" />
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="6dp">
 
-                <!-- Category Filter -->
-                <Spinner
-                    android:id="@+id/spinner_category"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:layout_marginBottom="8dp"
-                    android:spinnerMode="dropdown" />
+                    <Spinner
+                        android:id="@+id/spinner_app"
+                        android:layout_width="0dp"
+                        android:layout_height="36dp"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="6dp"
+                        android:spinnerMode="dropdown" />
 
-                <!-- Text Search -->
-                <EditText
-                    android:id="@+id/edit_text_search"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:hint="Search in title/text..."
-                    android:textSize="13sp"
-                    android:textColor="#000000"
-                    android:textColorHint="#757575"
-                    android:paddingLeft="8dp"
-                    android:paddingRight="8dp"
-                    android:background="@android:color/white"
-                    android:layout_marginBottom="8dp"
-                    android:inputType="text" />
+                    <Spinner
+                        android:id="@+id/spinner_category"
+                        android:layout_width="0dp"
+                        android:layout_height="36dp"
+                        android:layout_weight="1"
+                        android:spinnerMode="dropdown" />
+                </LinearLayout>
 
-                <!-- Ongoing Filter -->
-                <Spinner
-                    android:id="@+id/spinner_ongoing"
+                <!-- Text Search and Ongoing in one row -->
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:layout_marginBottom="8dp"
-                    android:spinnerMode="dropdown" />
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="6dp">
+
+                    <EditText
+                        android:id="@+id/edit_text_search"
+                        android:layout_width="0dp"
+                        android:layout_height="36dp"
+                        android:layout_weight="1"
+                        android:hint="Search..."
+                        android:textSize="12sp"
+                        android:textColor="#000000"
+                        android:textColorHint="#757575"
+                        android:paddingLeft="6dp"
+                        android:paddingRight="6dp"
+                        android:background="@android:color/white"
+                        android:layout_marginEnd="6dp"
+                        android:inputType="text" />
+
+                    <Spinner
+                        android:id="@+id/spinner_ongoing"
+                        android:layout_width="0dp"
+                        android:layout_height="36dp"
+                        android:layout_weight="1"
+                        android:spinnerMode="dropdown" />
+                </LinearLayout>
 
                 <!-- Action Buttons -->
                 <LinearLayout
@@ -200,23 +214,23 @@
                     <Button
                         android:id="@+id/btn_clear_filters"
                         android:layout_width="wrap_content"
-                        android:layout_height="36dp"
-                        android:text="Clear All"
-                        android:textSize="12sp"
-                        android:paddingLeft="12dp"
-                        android:paddingRight="12dp"
-                        android:layout_marginEnd="8dp"
+                        android:layout_height="32dp"
+                        android:text="Clear"
+                        android:textSize="11sp"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp"
+                        android:layout_marginEnd="6dp"
                         style="?android:attr/borderlessButtonStyle" />
 
                     <Button
                         android:id="@+id/btn_apply_filters"
                         style="@style/SimpleButtonBlack"
                         android:layout_width="wrap_content"
-                        android:layout_height="36dp"
+                        android:layout_height="32dp"
                         android:text="Apply"
-                        android:textSize="12sp"
-                        android:paddingLeft="16dp"
-                        android:paddingRight="16dp" />
+                        android:textSize="11sp"
+                        android:paddingLeft="12dp"
+                        android:paddingRight="12dp" />
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
