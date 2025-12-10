@@ -197,6 +197,9 @@ public class MainActivity extends AppCompatActivity {
             } else if (id == R.id.menu_compact) {
                 compactDB();
                 return true;
+            } else if (id == R.id.menu_export_db) {
+                exportDBFile();
+                return true;
             } else if (id == R.id.menu_clear) {
                 clearLog();
                 return true;
@@ -303,6 +306,29 @@ public class MainActivity extends AppCompatActivity {
                     runOnUiThread(() -> {
                         new AlertDialog.Builder(this, R.style.DialogTheme)
                             .setTitle("Compact Complete")
+                            .setMessage(result)
+                            .setPositiveButton("OK", null)
+                            .show();
+                    });
+                }).start();
+            })
+            .setNegativeButton("Cancel", null)
+            .show();
+    }
+
+    // Menu: Export DB File (Debug/Verification Tool)
+    private void exportDBFile() {
+        new AlertDialog.Builder(this, R.style.DialogTheme)
+            .setTitle("Export Database File")
+            .setMessage("This will copy the encrypted database file to your Downloads folder for verification. " +
+                       "Try opening it with DB Browser for SQLite - it should fail or request a password, " +
+                       "proving encryption is active.")
+            .setPositiveButton("Export", (dialog, which) -> {
+                new Thread(() -> {
+                    String result = DataRepository.exportDBFile(this);
+                    runOnUiThread(() -> {
+                        new AlertDialog.Builder(this, R.style.DialogTheme)
+                            .setTitle("Export Complete")
                             .setMessage(result)
                             .setPositiveButton("OK", null)
                             .show();

@@ -25,6 +25,9 @@
         android:id="@+id/menu_compact"
         android:title="🗜️ Compact DB" />
     <item
+        android:id="@+id/menu_export_db"
+        android:title="💾 Export DB (Debug)" />
+    <item
         android:id="@+id/menu_clear"
         android:title="🗑️ Clear All" />
 </menu>

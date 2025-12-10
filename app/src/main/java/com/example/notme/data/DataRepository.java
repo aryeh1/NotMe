@@ -397,4 +397,98 @@ public class DataRepository {
             return "Error compacting: " + e.getMessage();
         }
     }
+
+    // Export database file to Downloads folder (Debug/Verification Tool)
+    public static String exportDBFile(Context context) {
+        if (!USE_DB) {
+            return "Export DB only available in Database mode";
+        }
+
+        try {
+            // Get the database file
+            File dbFile = context.getDatabasePath("notifications.db");
+
+            if (!dbFile.exists()) {
+                return "Database file not found";
+            }
+
+            // Force checkpoint to flush WAL to main database file
+            try {
+                AppDatabase.getInstance(context).getOpenHelper()
+                    .getWritableDatabase().execSQL("PRAGMA wal_checkpoint(FULL)");
+            } catch (Exception e) {
+                LogWrapper.w(TAG, "Could not checkpoint WAL: " + e.getMessage());
+            }
+
+            // Use MediaStore for Android 10+ (API 29+)
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                android.content.ContentValues values = new android.content.ContentValues();
+                values.put(android.provider.MediaStore.MediaColumns.DISPLAY_NAME, "notifications_encrypted.db");
+                values.put(android.provider.MediaStore.MediaColumns.MIME_TYPE, "application/octet-stream");
+                values.put(android.provider.MediaStore.MediaColumns.RELATIVE_PATH, android.os.Environment.DIRECTORY_DOWNLOADS);
+
+                android.net.Uri uri = context.getContentResolver().insert(
+                    android.provider.MediaStore.Downloads.EXTERNAL_CONTENT_URI,
+                    values
+                );
+
+                if (uri == null) {
+                    return "Error: Could not create file in Downloads";
+                }
+
+                // Copy database file to Downloads
+                java.io.OutputStream outputStream = context.getContentResolver().openOutputStream(uri);
+                java.io.FileInputStream inputStream = new java.io.FileInputStream(dbFile);
+
+                byte[] buffer = new byte[8192];
+                int bytesRead;
+                while ((bytesRead = inputStream.read(buffer)) != -1) {
+                    outputStream.write(buffer, 0, bytesRead);
+                }
+
+                inputStream.close();
+                outputStream.close();
+
+                LogWrapper.d(TAG, "exportDBFile: Exported to Downloads/notifications_encrypted.db");
+
+                return "✓ Database exported successfully!\n\n" +
+                       "Location: Downloads/notifications_encrypted.db\n" +
+                       "Size: " + String.format("%.2f KB", dbFile.length() / 1024.0) + "\n\n" +
+                       "Try opening this file with 'DB Browser for SQLite'.\n" +
+                       "It should fail or request a password, proving encryption is active.";
+
+            } else {
+                // For Android 9 and below
+                File downloadsDir = android.os.Environment.getExternalStoragePublicDirectory(
+                    android.os.Environment.DIRECTORY_DOWNLOADS
+                );
+                File destFile = new File(downloadsDir, "notifications_encrypted.db");
+
+                // Copy file
+                java.io.FileInputStream inputStream = new java.io.FileInputStream(dbFile);
+                java.io.FileOutputStream outputStream = new java.io.FileOutputStream(destFile);
+
+                byte[] buffer = new byte[8192];
+                int bytesRead;
+                while ((bytesRead = inputStream.read(buffer)) != -1) {
+                    outputStream.write(buffer, 0, bytesRead);
+                }
+
+                inputStream.close();
+                outputStream.close();
+
+                LogWrapper.d(TAG, "exportDBFile: Exported to " + destFile.getAbsolutePath());
+
+                return "✓ Database exported successfully!\n\n" +
+                       "Location: " + destFile.getAbsolutePath() + "\n" +
+                       "Size: " + String.format("%.2f KB", dbFile.length() / 1024.0) + "\n\n" +
+                       "Try opening this file with 'DB Browser for SQLite'.\n" +
+                       "It should fail or request a password, proving encryption is active.";
+            }
+
+        } catch (Exception e) {
+            LogWrapper.e(TAG, "exportDBFile: Error", e);
+            return "Error exporting database: " + e.getMessage();
+        }
+    }
 }
