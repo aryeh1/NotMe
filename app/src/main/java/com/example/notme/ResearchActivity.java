@@ -471,13 +471,11 @@ public class ResearchActivity extends AppCompatActivity {
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
             NotificationEntity item = items.get(position);
 
-            // Time (HH:MM)
-            String time = item.getTimestamp().length() >= 16 ?
-                item.getTimestamp().substring(11, 16) : item.getTimestamp();
-            holder.txtTime.setText(time);
+            // Full timestamp (YYYY-MM-DD HH:MM:SS)
+            holder.txtTime.setText(item.getTimestamp());
 
-            // App name
-            holder.txtApp.setText(extractAppName(item.getPackageName()));
+            // Full package name
+            holder.txtApp.setText(item.getPackageName());
 
             // Category
             String category = item.getCategory();
