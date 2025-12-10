@@ -10,7 +10,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 import androidx.sqlite.db.SupportSQLiteOpenHelper;
 import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory;
 
-import net.zetetic.database.sqlcipher.SupportFactory;
+import net.sqlcipher.database.SupportFactory;
 
 @Database(entities = {NotificationEntity.class}, version = 2, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
