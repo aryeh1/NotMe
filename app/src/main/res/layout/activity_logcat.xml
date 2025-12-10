@@ -28,7 +28,7 @@
 
         <Button
             android:id="@+id/btn_copy"
-            style="@style/SimpleButton"
+            style="@style/SimpleButtonBlack"
             android:layout_width="wrap_content"
             android:layout_height="36dp"
             android:text="📋 Copy"
@@ -39,7 +39,7 @@
 
         <Button
             android:id="@+id/btn_clear"
-            style="@style/SimpleButton"
+            style="@style/SimpleButtonBlack"
             android:layout_width="wrap_content"
             android:layout_height="36dp"
             android:text="Clear"
@@ -50,7 +50,7 @@
 
         <Button
             android:id="@+id/btn_back"
-            style="@style/SimpleButton"
+            style="@style/SimpleButtonBlack"
             android:layout_width="wrap_content"
             android:layout_height="36dp"
             android:text="← Back"
@@ -124,7 +124,7 @@
 
                 <Button
                     android:id="@+id/btn_filter_all"
-                    style="@style/SimpleButton"
+                    style="@style/SimpleButtonBlack"
                     android:layout_width="0dp"
                     android:layout_height="36dp"
                     android:layout_weight="1"
@@ -134,7 +134,7 @@
 
                 <Button
                     android:id="@+id/btn_filter_debug"
-                    style="@style/SimpleButton"
+                    style="@style/SimpleButtonBlack"
                     android:layout_width="0dp"
                     android:layout_height="36dp"
                     android:layout_weight="1"
@@ -144,7 +144,7 @@
 
                 <Button
                     android:id="@+id/btn_filter_info"
-                    style="@style/SimpleButton"
+                    style="@style/SimpleButtonBlack"
                     android:layout_width="0dp"
                     android:layout_height="36dp"
                     android:layout_weight="1"
@@ -154,7 +154,7 @@
 
                 <Button
                     android:id="@+id/btn_filter_warn"
-                    style="@style/SimpleButton"
+                    style="@style/SimpleButtonBlack"
                     android:layout_width="0dp"
                     android:layout_height="36dp"
                     android:layout_weight="1"
@@ -164,7 +164,7 @@
 
                 <Button
                     android:id="@+id/btn_filter_error"
-                    style="@style/SimpleButton"
+                    style="@style/SimpleButtonBlack"
                     android:layout_width="0dp"
                     android:layout_height="36dp"
                     android:layout_weight="1"

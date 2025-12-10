@@ -102,16 +102,6 @@ public class ResearchActivity extends AppCompatActivity {
         btnClearFilters.setOnClickListener(v -> clearFilters());
         btnExport.setOnClickListener(v -> exportResults());
 
-        // Sort change listener
-        spinnerSort.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
-                if (position > 0) applyFilters(); // Skip first "select" if it's a change
-            }
-            @Override
-            public void onNothingSelected(android.widget.AdapterView<?> parent) {}
-        });
-
         // Load filter options
         loadFilterOptions();
     }
@@ -184,23 +174,50 @@ public class ResearchActivity extends AppCompatActivity {
         for (String pkg : allPackages) {
             appOptions.add(pkg); // Show full package name instead of shortened version
         }
-        spinnerApp.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, appOptions));
-        ((ArrayAdapter) spinnerApp.getAdapter()).setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<String> appAdapter = new ArrayAdapter<>(this, R.layout.spinner_item, appOptions);
+        appAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        spinnerApp.setAdapter(appAdapter);
+        spinnerApp.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
+                applyFilters();
+            }
+            @Override
+            public void onNothingSelected(android.widget.AdapterView<?> parent) {}
+        });
 
         // Category spinner
         List<String> categoryOptions = new ArrayList<>();
         categoryOptions.add("All Categories");
         categoryOptions.addAll(allCategories);
-        spinnerCategory.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, categoryOptions));
-        ((ArrayAdapter) spinnerCategory.getAdapter()).setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<String> categoryAdapter = new ArrayAdapter<>(this, R.layout.spinner_item, categoryOptions);
+        categoryAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        spinnerCategory.setAdapter(categoryAdapter);
+        spinnerCategory.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
+                applyFilters();
+            }
+            @Override
+            public void onNothingSelected(android.widget.AdapterView<?> parent) {}
+        });
 
         // Ongoing spinner
         List<String> ongoingOptions = new ArrayList<>();
         ongoingOptions.add("All Types");
         ongoingOptions.add("Ongoing Only");
         ongoingOptions.add("Regular Only");
-        spinnerOngoing.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, ongoingOptions));
-        ((ArrayAdapter) spinnerOngoing.getAdapter()).setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<String> ongoingAdapter = new ArrayAdapter<>(this, R.layout.spinner_item, ongoingOptions);
+        ongoingAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        spinnerOngoing.setAdapter(ongoingAdapter);
+        spinnerOngoing.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
+                applyFilters();
+            }
+            @Override
+            public void onNothingSelected(android.widget.AdapterView<?> parent) {}
+        });
 
         // Sort spinner
         List<String> sortOptions = new ArrayList<>();
@@ -208,8 +225,17 @@ public class ResearchActivity extends AppCompatActivity {
         sortOptions.add("Oldest First");
         sortOptions.add("App A-Z");
         sortOptions.add("App Z-A");
-        spinnerSort.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, sortOptions));
-        ((ArrayAdapter) spinnerSort.getAdapter()).setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<String> sortAdapter = new ArrayAdapter<>(this, R.layout.spinner_item, sortOptions);
+        sortAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        spinnerSort.setAdapter(sortAdapter);
+        spinnerSort.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
+                applyFilters();
+            }
+            @Override
+            public void onNothingSelected(android.widget.AdapterView<?> parent) {}
+        });
     }
 
     private void toggleFiltersPanel() {

@@ -28,7 +28,7 @@
 
         <Button
             android:id="@+id/btn_export"
-            style="@style/SimpleButton"
+            style="@style/SimpleButtonBlack"
             android:layout_width="wrap_content"
             android:layout_height="36dp"
             android:text="📤 Export"
@@ -39,7 +39,7 @@
 
         <Button
             android:id="@+id/btn_back"
-            style="@style/SimpleButton"
+            style="@style/SimpleButtonBlack"
             android:layout_width="wrap_content"
             android:layout_height="36dp"
             android:text="← Back"
@@ -210,7 +210,7 @@
 
                     <Button
                         android:id="@+id/btn_apply_filters"
-                        style="@style/SimpleButton"
+                        style="@style/SimpleButtonBlack"
                         android:layout_width="wrap_content"
                         android:layout_height="36dp"
                         android:text="Apply"
