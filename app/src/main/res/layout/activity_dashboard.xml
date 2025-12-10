@@ -70,12 +70,16 @@
                     android:orientation="horizontal">
 
                     <LinearLayout
+                        android:id="@+id/stat_total"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:orientation="vertical"
                         android:gravity="center"
-                        android:padding="8dp">
+                        android:padding="8dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="?android:attr/selectableItemBackground">
 
                         <TextView
                             android:id="@+id/txt_total_count"
@@ -95,12 +99,16 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/stat_ongoing"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:orientation="vertical"
                         android:gravity="center"
-                        android:padding="8dp">
+                        android:padding="8dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="?android:attr/selectableItemBackground">
 
                         <TextView
                             android:id="@+id/txt_ongoing_count"
@@ -120,12 +128,16 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/stat_regular"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:orientation="vertical"
                         android:gravity="center"
-                        android:padding="8dp">
+                        android:padding="8dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="?android:attr/selectableItemBackground">
 
                         <TextView
                             android:id="@+id/txt_regular_count"

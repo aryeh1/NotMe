@@ -74,6 +74,24 @@ public class DashboardActivity extends AppCompatActivity {
         cardCategories.setOnClickListener(v -> showCategoriesDetails());
         cardHourly.setOnClickListener(v -> showHourlyDetails());
         cardLast7Days.setOnClickListener(v -> showDaysDetails());
+
+        // Make statistics numbers clickable
+        findViewById(R.id.stat_total).setOnClickListener(v -> {
+            Intent intent = new Intent(this, ResearchActivity.class);
+            startActivity(intent);
+        });
+
+        findViewById(R.id.stat_ongoing).setOnClickListener(v -> {
+            Intent intent = new Intent(this, ResearchActivity.class);
+            intent.putExtra("FILTER_ONGOING", 1); // Ongoing only
+            startActivity(intent);
+        });
+
+        findViewById(R.id.stat_regular).setOnClickListener(v -> {
+            Intent intent = new Intent(this, ResearchActivity.class);
+            intent.putExtra("FILTER_ONGOING", 2); // Regular only
+            startActivity(intent);
+        });
     }
 
     private void loadDashboardData() {
@@ -169,39 +187,19 @@ public class DashboardActivity extends AppCompatActivity {
         }
 
         new AlertDialog.Builder(this, R.style.DialogTheme)
-            .setTitle("📱 Top Apps - Select to View History")
+            .setTitle("📱 Top Apps - Select to View Notifications")
             .setItems(items, (dialog, which) -> {
                 NotificationDao.PackageCount selected = topPackages.get(which);
-                showAppHistory(selected.packageName);
+                openResearchWithAppFilter(selected.packageName);
             })
             .setNegativeButton("Close", null)
             .show();
     }
 
-    private void showAppHistory(String packageName) {
-        executor.execute(() -> {
-            List<NotificationDao.DayCount> history = dao.getPackageHistory(packageName);
-            StringBuilder historyText = new StringBuilder();
-
-            if (history.isEmpty()) {
-                historyText.append("No history available");
-            } else {
-                int maxCount = history.get(0).count;
-                for (NotificationDao.DayCount dc : history) {
-                    String bar = createBar(dc.count, maxCount);
-                    historyText.append(String.format(Locale.getDefault(),
-                        "%s  %s (%,d)\n", bar, dc.date, dc.count));
-                }
-            }
-
-            runOnUiThread(() -> {
-                new AlertDialog.Builder(this, R.style.DialogTheme)
-                    .setTitle("📊 " + extractAppName(packageName) + " - 30 Day History")
-                    .setMessage(historyText.toString().trim())
-                    .setPositiveButton("OK", null)
-                    .show();
-            });
-        });
+    private void openResearchWithAppFilter(String packageName) {
+        Intent intent = new Intent(this, ResearchActivity.class);
+        intent.putExtra("FILTER_APP", packageName);
+        startActivity(intent);
     }
 
     private void showCategoriesDetails() {
@@ -220,42 +218,19 @@ public class DashboardActivity extends AppCompatActivity {
         }
 
         new AlertDialog.Builder(this, R.style.DialogTheme)
-            .setTitle("📂 Categories - Select to View History")
+            .setTitle("📂 Categories - Select to View Notifications")
             .setItems(items, (dialog, which) -> {
                 NotificationDao.CategoryCount selected = categories.get(which);
-                showCategoryHistory(selected.category);
+                openResearchWithCategoryFilter(selected.category);
             })
             .setNegativeButton("Close", null)
             .show();
     }
 
-    private void showCategoryHistory(String category) {
-        executor.execute(() -> {
-            List<NotificationDao.DayCount> history = dao.getCategoryHistory(category);
-            StringBuilder historyText = new StringBuilder();
-
-            if (history.isEmpty()) {
-                historyText.append("No history available");
-            } else {
-                int maxCount = history.get(0).count;
-                for (NotificationDao.DayCount dc : history) {
-                    String bar = createBar(dc.count, maxCount);
-                    historyText.append(String.format(Locale.getDefault(),
-                        "%s  %s (%,d)\n", bar, dc.date, dc.count));
-                }
-            }
-
-            String categoryName = category == null || category.isEmpty() ?
-                "Uncategorized" : category;
-
-            runOnUiThread(() -> {
-                new AlertDialog.Builder(this, R.style.DialogTheme)
-                    .setTitle("📊 " + categoryName + " - 30 Day History")
-                    .setMessage(historyText.toString().trim())
-                    .setPositiveButton("OK", null)
-                    .show();
-            });
-        });
+    private void openResearchWithCategoryFilter(String category) {
+        Intent intent = new Intent(this, ResearchActivity.class);
+        intent.putExtra("FILTER_CATEGORY", category != null ? category : "");
+        startActivity(intent);
     }
 
     private void showHourlyDetails() {
@@ -307,53 +282,19 @@ public class DashboardActivity extends AppCompatActivity {
         }
 
         new AlertDialog.Builder(this, R.style.DialogTheme)
-            .setTitle("📅 Last 7 Days - Select Day to View Details")
+            .setTitle("📅 Last 7 Days - Select Day to View Notifications")
             .setItems(items, (dialog, which) -> {
                 NotificationDao.DayCount selected = last7Days.get(which);
-                showDayDetails(selected.date);
+                openResearchWithDateFilter(selected.date);
             })
             .setNegativeButton("Close", null)
             .show();
     }
 
-    private void showDayDetails(String date) {
-        executor.execute(() -> {
-            List<NotificationEntity> notifications = dao.getNotificationsByDate(date);
-            StringBuilder detailText = new StringBuilder();
-
-            if (notifications.isEmpty()) {
-                detailText.append("No notifications for this date");
-            } else {
-                detailText.append(String.format(Locale.getDefault(),
-                    "Total: %,d notifications\n\n", notifications.size()));
-
-                // Show first 20 notifications
-                int limit = Math.min(20, notifications.size());
-                for (int i = 0; i < limit; i++) {
-                    NotificationEntity n = notifications.get(i);
-                    String time = n.getTimestamp().substring(11, 16); // HH:MM
-                    String app = extractAppName(n.getPackageName());
-                    String title = n.getTitle() != null && !n.getTitle().isEmpty() ?
-                        n.getTitle() : "No title";
-
-                    detailText.append(String.format(Locale.getDefault(),
-                        "%s • %s\n%s\n\n", time, app, title));
-                }
-
-                if (notifications.size() > 20) {
-                    detailText.append(String.format(Locale.getDefault(),
-                        "...and %d more", notifications.size() - 20));
-                }
-            }
-
-            runOnUiThread(() -> {
-                new AlertDialog.Builder(this, R.style.DialogTheme)
-                    .setTitle("📅 " + date)
-                    .setMessage(detailText.toString().trim())
-                    .setPositiveButton("OK", null)
-                    .show();
-            });
-        });
+    private void openResearchWithDateFilter(String date) {
+        Intent intent = new Intent(this, ResearchActivity.class);
+        intent.putExtra("FILTER_DATE", date);
+        startActivity(intent);
     }
 
     private void showMessage(String title, String message) {

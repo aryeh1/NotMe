@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Simple black/white button style - no purple/accent colors -->
-    <style name="SimpleButton" parent="Widget.AppCompat.Button">
-        <item name="android:backgroundTint">#333333</item>
+    <!-- Outlined button style with white border and transparent background -->
+    <style name="SimpleButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
         <item name="android:textColor">#FFFFFF</item>
+        <item name="strokeColor">#FFFFFF</item>
+        <item name="strokeWidth">2dp</item>
+        <item name="android:backgroundTint">@android:color/transparent</item>
+        <item name="rippleColor">#40FFFFFF</item>
     </style>
 
     <!-- Dialog theme with black text -->

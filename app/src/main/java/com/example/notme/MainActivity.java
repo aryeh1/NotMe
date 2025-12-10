@@ -33,8 +33,8 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView txtView;
     private TextView statusText;
-    private Button checkPermissionBtn;
-    private Button openSettingsBtn;
+    private Button dashboardBtn;
+    private Button researchBtn;
     private Button testBtn;
     private Button moreBtn;
 
@@ -48,14 +48,14 @@ public class MainActivity extends AppCompatActivity {
         // Find all views
         txtView = findViewById(R.id.notificationLog);
         statusText = findViewById(R.id.statusText);
-        checkPermissionBtn = findViewById(R.id.checkPermissionBtn);
-        openSettingsBtn = findViewById(R.id.openSettingsBtn);
+        dashboardBtn = findViewById(R.id.dashboardBtn);
+        researchBtn = findViewById(R.id.researchBtn);
         testBtn = findViewById(R.id.testBtn);
         moreBtn = findViewById(R.id.moreBtn);
 
         // Set up button click listeners
-        checkPermissionBtn.setOnClickListener(v -> checkPermissionStatus(true));
-        openSettingsBtn.setOnClickListener(v -> openNotificationSettings());
+        dashboardBtn.setOnClickListener(v -> openDashboard());
+        researchBtn.setOnClickListener(v -> openResearchTool());
         testBtn.setOnClickListener(v -> testBroadcast());
         moreBtn.setOnClickListener(v -> showMoreMenu());
 
@@ -173,11 +173,11 @@ public class MainActivity extends AppCompatActivity {
         popup.setOnMenuItemClickListener(item -> {
             int id = item.getItemId();
 
-            if (id == R.id.menu_dashboard) {
-                openDashboard();
+            if (id == R.id.menu_check_permission) {
+                checkPermissionStatus(true);
                 return true;
-            } else if (id == R.id.menu_advanced_search) {
-                openResearchTool();
+            } else if (id == R.id.menu_settings) {
+                openNotificationSettings();
                 return true;
             } else if (id == R.id.menu_stats) {
                 showStats();
