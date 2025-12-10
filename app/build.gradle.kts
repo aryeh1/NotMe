@@ -57,8 +57,8 @@ dependencies {
     implementation("androidx.room:room-runtime:2.6.1")
     annotationProcessor("androidx.room:room-compiler:2.6.1")
 
-    // SQLCipher for encrypted database (using newer sqlcipher-android library)
-    implementation("net.zetetic:sqlcipher-android:4.6.1")
+    // SQLCipher for encrypted database (using sqlcipher-android library)
+    implementation("net.zetetic:sqlcipher-android:4.6.1@aar")
     implementation("androidx.sqlite:sqlite:2.2.0")
 
     testImplementation(libs.junit)

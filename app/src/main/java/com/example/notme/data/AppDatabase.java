@@ -10,7 +10,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 import androidx.sqlite.db.SupportSQLiteOpenHelper;
 import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory;
 
-import net.sqlcipher.database.SupportFactory;
+import net.zetetic.database.sqlcipher.SupportOpenHelperFactory;
 
 @Database(entities = {NotificationEntity.class}, version = 2, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
@@ -37,8 +37,8 @@ public abstract class AppDatabase extends RoomDatabase {
                         // Continue anyway - the app should still work for new data
                     }
 
-                    // Create SupportFactory with the passphrase for SQLCipher
-                    SupportFactory factory = new SupportFactory(passphrase, null, false);
+                    // Create SupportOpenHelperFactory with the passphrase for SQLCipher
+                    SupportOpenHelperFactory factory = new SupportOpenHelperFactory(passphrase, null, false);
 
                     // Build Room database with encryption
                     INSTANCE = Room.databaseBuilder(
