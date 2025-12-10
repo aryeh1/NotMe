@@ -32,43 +32,43 @@
         android:layout_marginBottom="8dp">
 
         <Button
-            android:id="@+id/checkPermissionBtn"
+            android:id="@+id/dashboardBtn"
             style="@style/SimpleButton"
             android:layout_width="0dp"
-            android:layout_height="40dp"
+            android:layout_height="48dp"
             android:layout_weight="1"
-            android:text="CHECK"
-            android:textSize="8sp"
+            android:text="DASHBOARD"
+            android:textSize="10sp"
             android:layout_marginEnd="8dp" />
 
         <Button
-            android:id="@+id/openSettingsBtn"
+            android:id="@+id/researchBtn"
             style="@style/SimpleButton"
             android:layout_width="0dp"
-            android:layout_height="40dp"
+            android:layout_height="48dp"
             android:layout_weight="1"
-            android:text="SETTINGS"
-            android:textSize="8sp"
+            android:text="RESEARCH"
+            android:textSize="10sp"
             android:layout_marginEnd="8dp" />
 
         <Button
             android:id="@+id/testBtn"
             style="@style/SimpleButton"
             android:layout_width="0dp"
-            android:layout_height="40dp"
+            android:layout_height="48dp"
             android:layout_weight="1"
             android:text="TEST"
-            android:textSize="8sp"
+            android:textSize="10sp"
             android:layout_marginEnd="8dp" />
 
         <Button
             android:id="@+id/moreBtn"
             style="@style/SimpleButton"
             android:layout_width="0dp"
-            android:layout_height="40dp"
+            android:layout_height="48dp"
             android:layout_weight="1"
-            android:text="MORE.."
-            android:textSize="8sp" />
+            android:text="MORE..."
+            android:textSize="10sp" />
     </LinearLayout>
 
     <TextView

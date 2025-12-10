@@ -123,18 +123,66 @@ public class ResearchActivity extends AppCompatActivity {
 
             runOnUiThread(() -> {
                 setupSpinners();
-                loadSavedFilters();
+
+                // Check for Intent extras to pre-set filters
+                Intent intent = getIntent();
+                if (intent.hasExtra("FILTER_APP")) {
+                    String appFilter = intent.getStringExtra("FILTER_APP");
+                    setAppFilter(appFilter);
+                } else if (intent.hasExtra("FILTER_CATEGORY")) {
+                    String categoryFilter = intent.getStringExtra("FILTER_CATEGORY");
+                    setCategoryFilter(categoryFilter);
+                } else if (intent.hasExtra("FILTER_ONGOING")) {
+                    int ongoingFilter = intent.getIntExtra("FILTER_ONGOING", -1);
+                    setOngoingFilter(ongoingFilter);
+                } else if (intent.hasExtra("FILTER_DATE")) {
+                    String dateFilter = intent.getStringExtra("FILTER_DATE");
+                    editDateFrom.setText(dateFilter);
+                    editDateTo.setText(dateFilter);
+                } else {
+                    // Load saved filters only if no Intent extras
+                    loadSavedFilters();
+                }
+
                 applyFilters();
             });
         });
     }
 
+    private void setAppFilter(String packageName) {
+        // Find the app in the spinner
+        for (int i = 0; i < allPackages.size(); i++) {
+            if (allPackages.get(i).equals(packageName)) {
+                spinnerApp.setSelection(i + 1); // +1 because "All Apps" is at position 0
+                return;
+            }
+        }
+    }
+
+    private void setCategoryFilter(String category) {
+        // Find the category in the spinner
+        ArrayAdapter<String> adapter = (ArrayAdapter<String>) spinnerCategory.getAdapter();
+        for (int i = 0; i < adapter.getCount(); i++) {
+            if (adapter.getItem(i).equals(category)) {
+                spinnerCategory.setSelection(i);
+                return;
+            }
+        }
+    }
+
+    private void setOngoingFilter(int filterType) {
+        // filterType: 0 = All, 1 = Ongoing Only, 2 = Regular Only
+        if (filterType >= 0 && filterType <= 2) {
+            spinnerOngoing.setSelection(filterType);
+        }
+    }
+
     private void setupSpinners() {
-        // App spinner
+        // App spinner - show full package name
         List<String> appOptions = new ArrayList<>();
         appOptions.add("All Apps");
         for (String pkg : allPackages) {
-            appOptions.add(extractAppName(pkg));
+            appOptions.add(pkg); // Show full package name instead of shortened version
         }
         spinnerApp.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, appOptions));
         ((ArrayAdapter) spinnerApp.getAdapter()).setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);

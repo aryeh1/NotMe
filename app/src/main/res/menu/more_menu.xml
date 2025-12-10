@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/menu_dashboard"
-        android:title="📈 Dashboard" />
+        android:id="@+id/menu_check_permission"
+        android:title="✓ Check Permission" />
     <item
-        android:id="@+id/menu_advanced_search"
-        android:title="🔬 Research Tool" />
+        android:id="@+id/menu_settings"
+        android:title="⚙️ Settings" />
     <item
         android:id="@+id/menu_stats"
         android:title="📊 Stats" />
