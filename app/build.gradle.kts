@@ -59,7 +59,7 @@ dependencies {
 
     // SQLCipher for encrypted database
     implementation("net.zetetic:android-database-sqlcipher:4.5.4")
-    implementation("androidx.sqlite:sqlite-framework:2.4.0")
+    implementation("androidx.sqlite:sqlite:2.4.0")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
