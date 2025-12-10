@@ -5,7 +5,6 @@ import android.database.Cursor;
 import android.util.Log;
 
 import net.zetetic.database.sqlcipher.SQLiteDatabase;
-import net.zetetic.database.sqlcipher.SQLiteException;
 
 import java.io.File;
 
@@ -110,7 +109,7 @@ public class DatabaseMigrationHelper {
 
             Log.i(TAG, "Database opened successfully with passphrase - already encrypted");
             return true;
-        } catch (SQLiteException e) {
+        } catch (Exception e) {
             Log.i(TAG, "Database could not be opened with passphrase - likely unencrypted");
             return false;
         } finally {
